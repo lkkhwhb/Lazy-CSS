@@ -23,7 +23,7 @@ The dynamic style generation system uses a specific class naming convention:
     *   **`prefix`:** A short code for a CSS property (see table below).
     *   **`value`:**  The numeric value for the property.
     *   **`unit`:** (Optional) The unit (e.g., `px`, `rem`, `em`, `%`). Defaults to `px` if omitted.
-    *   **`colorName`:** For color-related properties (`c` for color, `bg` for background-color), use a valid CSS color name (e.g., `red`, `blue-500`, `rgba(0,0,0,0.5)`).  You can use any valid CSS color value here, including hex codes, color names, and `rgb()`/`rgba()` functions.
+    *   **`colorName`:** For color-related properties (`c` for color, `bg` for background-color), use a valid CSS color name (e.g., `red`,`rgba(0,0,0,0.5)`).  You can use any valid CSS color value here, including hex codes, color names, and `rgb()`/`rgba()` functions.
 
 **Dynamic Style Prefixes:**
 
