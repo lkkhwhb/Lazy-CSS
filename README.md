@@ -1,6 +1,6 @@
 # Lazy CSS - A Utility-First CSS Framework
 
-Lazy CSS is a lightweight, utility-first CSS framework for rapid web development.  It provides a large set of single-purpose classes to style elements directly in your HTML, reducing the need for custom CSS. It also includes a powerful dynamic style generation system.
+Lazy CSS is a lightweight, utility-first CSS framework for rapid web development. It provides a large set of single-purpose classes to style elements directly in your HTML, reducing the need for custom CSS. It also includes a powerful dynamic style generation system.
 
 ## Features
 
@@ -10,20 +10,32 @@ Lazy CSS is a lightweight, utility-first CSS framework for rapid web development
 *   **Shortcuts:** Combined classes for common styles.
 *   **Font Styling:** Classes for fonts, styles, weights, etc.
 *   **Animations:** Pre-built CSS animations.
-*    **Loaders:** Simple loading animations.
+*   **Loaders:** Simple loading animations.
 
 ## Usage
+Place these inside the `<head>` of your HTML.
+```
+<link rel="stylesheet" href="https://bhargavxyz738.github.io/Lazy-CSS/lazy.css">
+<script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js">
+```
 
 ### Dynamic Styles
 
 The dynamic style generation system uses a specific class naming convention:
 
-*   **`prefix-value[unit]`**  or **`prefix-colorName`**
+*   **`prefix-value[unit]`**  or **`prefix-cssColorValue`**
 
     *   **`prefix`:** A short code for a CSS property (see table below).
     *   **`value`:**  The numeric value for the property.
     *   **`unit`:** (Optional) The unit (e.g., `px`, `rem`, `em`, `%`). Defaults to `px` if omitted.
-    *   **`colorName`:** For color-related properties (`c` for color, `bg` for background-color), use a valid CSS color name (e.g., `red`,`rgba(0,0,0,0.5)`).  You can use any valid CSS color value here, including hex codes, color names, and `rgb()`/`rgba()` functions.
+    *   **`cssColorValue`:** For color-related properties (`c` for color, `bg` for background-color), use a **valid CSS color value**. This includes:
+        *   **Color keywords:**  `red`, `blue`, `transparent`, etc.
+        *   **Hexadecimal color codes:** `#ff0000`, `#f0f0f0`, etc.
+        *   **`rgb()` and `rgba()` functions:** `rgb(255, 0, 0)`, `rgba(0, 0, 0, 0.5)`, etc.
+        *   **`hsl()` and `hsla()` functions:** `hsl(0, 100%, 50%)`, `hsla(120, 100%, 50%, 0.8)`, etc.
+        *   **`currentcolor` keyword**
+
+        **Important:**  This framework does *not* support custom color names like `blue-500`.  You *must* use valid CSS color values directly.
 
 **Dynamic Style Prefixes:**
 
@@ -46,15 +58,16 @@ The dynamic style generation system uses a specific class naming convention:
 | `l`    | `left`            | `l-0px`                              | `left: 0px;`                         |
 | `r`    | `right`           | `r-5px`                              | `right: 5px;`                        |
 | `round`| `border-radius`   | `round-5px`, `round-50%`               | `border-radius: 5px;`,`border-radius: 50%;` |
-| `c`    | `color`           | `c-red`, `c-blue-500`, `c-#f0f0f0`    | `color: red;`, `color: blue-500;`, `color: #f0f0f0;` |
-| `bg`   | `background-color`| `bg-black`, `bg-gray-200`, `bg-transparent` | `background-color: black;`, `background-color: gray-200;`, `background-color:transparent;` |
+| `c`    | `color`           | `c-red`, `c-#f0f0f0`, `c-rgba(0,0,0,0.5)`    | `color: red;`, `color: #f0f0f0;`, `color: rgba(0,0,0,0.5);` |
+| `bg`   | `background-color`| `bg-black`, `bg-transparent`, `bg-rgb(240,240,240)` | `background-color: black;`, `background-color: transparent;`, `background-color: rgb(240,240,240);` |
 
 **Examples:**
 
-*   `<div class="w-200px h-100px bg-blue-500"></div>`  Creates a 200px by 100px blue box.
+*   `<div class="w-200px h-100px bg-blue"></div>`  Creates a 200px by 100px blue box.
 *   `<p class="m-10px p-20px c-white bg-black">Hello</p>` Creates a paragraph with 10px margin, 20px padding, white text, and a black background.
-* `<img class="round-20px" src="...">` Creates a image with 20px of border radius.
+*   `<img class="round-20px" src="...">` Creates an image with 20px of border radius.
 *   `<div class="mt-2rem mb-4rem"></div>`  Creates a div with 2rem top margin and 4rem bottom margin.
+*   `<div class="bg-rgba(255,0,0,0.5) w-50px h-50px"></div>` Creates a 50x50px box with a semi-transparent red background.
 
 ### Layout Classes
 
