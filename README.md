@@ -14,7 +14,7 @@ Lazy CSS is a lightweight, utility-first CSS framework for rapid web development
 
 ## Usage
 Place these inside the `<head>` of your HTML.
-```
+```html
 <link rel="stylesheet" href="https://bhargavxyz738.github.io/Lazy-CSS/lazy.css">
 <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js">
 ```
