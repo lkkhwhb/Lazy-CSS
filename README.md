@@ -58,6 +58,11 @@ The dynamic style generation system uses a specific class naming convention:
 | `l`    | `left`            | `l-0px`                              | `left: 0px;`                         |
 | `r`    | `right`           | `r-5px`                              | `right: 5px;`                        |
 | `round`| `border-radius`   | `round-5px`, `round-50%`               | `border-radius: 5px;`,`border-radius: 50%;` |
+| `bc`      | `border-color`    | `bc-black`         | `border-color: black;`                  |
+| `bt`      | `border-top-color`| `bt-red`          | `border-top-color: red;`               |
+| `bw`      | `border-width`    | `bw-2px`          | `border-width: 2px;`                   |
+| `bh`      | `border-height`   | `bh-100px`        | `border-height: 100px;`                |
+| `bs`      | `border-style`    | `bs-dashed`       | `border-style: dashed;`                |
 | `c`    | `color`           | `c-red`, `c-#f0f0f0`, `c-rgba(0,0,0,0.5)`    | `color: red;`, `color: #f0f0f0;`, `color: rgba(0,0,0,0.5);` |
 | `bg`   | `background-color`| `bg-black`, `bg-transparent`, `bg-rgb(240,240,240)` | `background-color: black;`, `background-color: transparent;`, `background-color: rgb(240,240,240);` |
 
