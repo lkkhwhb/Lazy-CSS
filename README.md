@@ -151,9 +151,11 @@ Apply these classes to trigger animations.
 | `flip-horizontal`| Flips an element horizontally.                        |
 | `flip-vertical`  | Flips an element vertically.                           |
 
-### Pre defined animations.
+### Pre defined animations and wedges.
 
 | Class            | Description                                      |
 | :--------------- | :----------------------------------------------- |
 | `loader-b-spin`  |  Black loader                                 |
 | `loader-w-spin`  |  White loader                                  |
+| `lazy-b-button` | Black button with white text |
+| `lazy-w-button` | white button with black text |
