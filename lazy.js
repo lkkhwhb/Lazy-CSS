@@ -1,86 +1,48 @@
-function generateDynamicStyles() {
-    const styleSheet = document.createElement("style");
-    document.head.appendChild(styleSheet);
-    const sheet = styleSheet.sheet;
-
-    function insertRule(rule) {
-        try {
-            sheet.insertRule(rule, sheet.cssRules.length);
-        } catch (e) {
-            console.warn("Could not insert rule:", rule, e);
-        }
-    }
-
+document.addEventListener("DOMContentLoaded", function () {
+    let styleElement = document.createElement("style");
+    document.head.appendChild(styleElement);
+    let cssRules = "";
     function escapeClassName(className) {
-        return className.replace(/([\%\.\:])/g, "\\$1");
+        return className.replace(/([\[\]])/g, '\\$1');
     }
-
-    const propertyMap = {
-        h: "height", w: "width", g: "gap", m: "margin",
-        mt: "margin-top", mb: "margin-bottom", ml: "margin-left", mr: "margin-right",
-        p: "padding", pt: "padding-top", pb: "padding-bottom",
-        pl: "padding-left", pr: "padding-right", t: "top",
-        b: "bottom", l: "left", r: "right", round: "border-radius",
-        c: "color", bg: "background-color", bc: "border-color",
-        bt: "border-top-color", bw: "border-width",
-        bh: "border-height", bs: "border-style"
-    };
-
-    function applyStyles(element, className) {
-        const numericProps = ["h", "w", "m", "mt", "mb", "ml", "mr", "p", "pt", "pb", "pl", "pr", "t", "b", "l", "r", "round", "g", "bw", "bh"];
-        const colorProps = ["c", "bg", "bc", "bt"];
-        const borderStyles = ["solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset", "none", "hidden"];
-
-        for (const short in propertyMap) {
-            const property = propertyMap[short];
+    document.querySelectorAll("*").forEach(element => {
+        element.classList.forEach(cls => {
+            let safeClass = escapeClassName(cls);
             let match;
-
-            if (className.startsWith(`${short}-`) && className.includes("dvh") && (match = className.match(new RegExp(`^(${short})-(\\d+(?:\\.\\d+)?)dvh$`)))) {
-                insertRule(`.${escapeClassName(className)} { ${property}: ${match[2]}dvh; }`);
-                return true;
+            // Height & Width
+            match = cls.match(/^hw-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { height: ${match[1]}; width: ${match[1]}; }\n`;
+            match = cls.match(/^(h|w)-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { ${match[1] === "h" ? "height" : "width"}: ${match[2]}; }\n`;
+            // Background Color & Text Color
+            match = cls.match(/^bg-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { background-color: ${match[1]}; }\n`;
+            match = cls.match(/^c-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { color: ${match[1]}; }\n`;
+            // Border Radius
+            match = cls.match(/^round-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { border-radius: ${match[1]}; }\n`;
+            // Margins
+            match = cls.match(/^(ml|m|mr|mt|mb)-\[(.+?)\]$/);
+            if (match) {
+                let marginSide = { ml: "margin-left",m:"margin",mr: "margin-right", mt: "margin-top", mb: "margin-bottom" }[match[1]];
+                cssRules += `.${safeClass} { ${marginSide}: ${match[2]}; }\n`;
             }
-
-            if (colorProps.includes(short) && className.startsWith(`${short}-[#`) && (match = className.match(new RegExp(`^(${short})-\\#([0-9a-fA-F]{3,8})$`)))) {
-                insertRule(`.${escapeClassName(className)} { ${property}: #${match[2]}; }`);
-                return true;
+            // Padding
+            match = cls.match(/^(pl|p|pr|pt|pb)-\[(.+?)\]$/);
+            if (match) {
+                let paddingSide = { pl: "padding-left", pr: "padding-right",p: "padding", pt: "padding-top", pb: "padding-bottom" }[match[1]];
+                cssRules += `.${safeClass} { ${paddingSide}: ${match[2]}; }\n`;
             }
-
-            if (numericProps.includes(short) && (match = className.match(new RegExp(`^(${short})-(\\d+(?:\\.\\d+)?)(px|rem|em|vh|vw|%)$`)))) {
-                insertRule(`.${escapeClassName(className)} { ${property}: ${match[2]}${match[3]}; }`);
-                return true;
+            // Positioning (left, right, top, bottom)
+            match = cls.match(/^(l|r|t|b)-\[(.+?)\]$/);
+            if (match) {
+                let positionSide = { l: "left", r: "right", t: "top", b: "bottom" }[match[1]];
+                cssRules += `.${safeClass} { ${positionSide}: ${match[2]}; position: absolute; }\n`;
             }
-
-            if (short === "round" && (match = className.match(new RegExp(`^(${short})-(\\d+)%$`)))) {
-                insertRule(`.${escapeClassName(className)} { ${property}: ${match[2]}%; }`);
-                return true;
-            }
-
-            if ((match = className.match(new RegExp(`^(${short})-(\\d+(?:\\.\\d+)?)$`)))) {
-                insertRule(`.${escapeClassName(className)} { ${property}: ${match[2]}px; }`);
-                return true;
-            }
-
-            if (colorProps.includes(short) && (match = className.match(new RegExp(`^(${short})-([a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*)$`)))) {
-                insertRule(`.${escapeClassName(className)} { ${property}: ${match[2].replace(/-/g, " ")}; }`);
-                return true;
-            }
-
-            if (short === "bs" && (match = className.match(new RegExp(`^bs-(${borderStyles.join("|")})$`)))) {
-                insertRule(`.${escapeClassName(className)} { border-style: ${match[1]}; }`);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    document.querySelectorAll("*").forEach((element) => {
-        element.classList.forEach((className) => {
-            applyStyles(element, className);
+            match = cls.match(/^fs-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { font-size: ${match[1]}; }\n`;
         });
     });
-}
-
-document.addEventListener("DOMContentLoaded", generateDynamicStyles);
-if (document.readyState === "complete" || document.readyState === "interactive") {
-    generateDynamicStyles();
-}
+    styleElement.textContent = cssRules;
+});
