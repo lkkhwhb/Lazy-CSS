@@ -155,5 +155,5 @@ Apply these classes to trigger animations.
 
 | Class            | Description                                      |
 | :--------------- | :----------------------------------------------- |
-| `loader-b-spin`  |  Black spinner                                   |
-| `loader-w-spin`  |  White spinner                                   |
+| `loader-b-spin`  |  Black loader                                 |
+| `loader-w-spin`  |  White loader                                  |
