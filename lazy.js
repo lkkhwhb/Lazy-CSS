@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (match) cssRules += `.${safeClass} { ${match[1] === "h" ? "height" : "width"}: ${match[2]}; }\n`;
 
             // Process curly braces styles
-            match = cls.match(/^(bg|c|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
+            match = cls.match(/^(bg|c|border|borderW|borderS|borderC|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
             if (match) {
                 const prefix = match[1];
                 const configKey = match[2];
@@ -94,6 +94,17 @@ document.addEventListener("DOMContentLoaded", function () {
                         case "p":
                             cssProperty = "padding";
                             break;
+                        case "borderC":
+                            cssProperty = "border-color";
+                            break;
+                        case "border":
+                            cssProperty = "border";
+                            break;
+                        case "borderW":
+                            cssProperty = "border-width";
+                            break;
+                        case "borderS":
+                            cssProperty = "border-style";
                         case "pr":
                             cssProperty = "padding-right";
                             break;
@@ -180,9 +191,21 @@ document.addEventListener("DOMContentLoaded", function () {
             match = cls.match(/^fs-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { font-size: ${match[1]}; }\n`;
             
+            
             // Add support for border styles
             match = cls.match(/^border-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border: ${match[1]}; }\n`;
+
+            match = cls.match(/^borderC-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { border-color: ${match[1]}; }\n`;
+
+            match = cls.match(/^borderW-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { border-width: ${match[1]}; }\n`;
+
+            
+            match = cls.match(/^borderS-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { border-style: ${match[1]}; }\n`;
+            
             
         });
     });
