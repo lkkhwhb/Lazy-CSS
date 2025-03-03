@@ -188,5 +188,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     styleElement.textContent = cssRules;
-    console.log("Lazy CSS should not be used via link for development purpose.");
+    console.log("Hey there! welcome to Lazy CSS, this is an early version of Lazy CSS so bugs maybe there. While using make sure that you are not using links for production. Thank you, happy CSS.");
 });
