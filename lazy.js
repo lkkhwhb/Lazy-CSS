@@ -188,5 +188,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     styleElement.textContent = cssRules;
-    console.log("Hey there! welcome to Lazy CSS, this is an early version of Lazy CSS so bugs maybe there. While using make sure that you are not using links for production. Thank you, happy CSS.");
+    console.log("Hello and welcome to Lazy CSS! This is an early version, so it may contain bugs. For development, you can use the CDN links provided. However, for production, it’s recommended to download the CSS and JS files directly from GitHub. Thank you, and happy styling with Lazy CSS!");
 });
