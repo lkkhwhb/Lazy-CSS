@@ -193,18 +193,17 @@ document.addEventListener("DOMContentLoaded", function () {
             
             
             
-match = cls.match(/^border-(.+?)$/);
-if (match) {
-    const borderValue = match[1];
-    const borderParts = borderValue.split(' ');
-    if (borderParts.length === 3) {
-        const [borderWidth, borderStyle, borderColor] = borderParts;
-        cssRules += `.${safeClass} { border: ${borderWidth} ${borderStyle} ${borderColor}; }\n`;
-    } else {
-        
-        cssRules += `.${safeClass} { border: ${borderValue}; }\n`;
-    }
-}
+            match = cls.match(/^border-(.+?)$/);
+            if (match) {
+               const borderValue = match[1];
+               const borderParts = borderValue.split(' ');
+            if (borderParts.length === 3) {
+               const [borderWidth, borderStyle, borderColor] = borderParts;
+               cssRules += `.${safeClass} { border: ${borderWidth} ${borderStyle} ${borderColor}; }\n`;
+            } else {
+               cssRules += `.${safeClass} { border: ${borderValue}; }\n`;
+            }
+            }
 
             match = cls.match(/^borderC-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border-color: ${match[1]}; }\n`;
