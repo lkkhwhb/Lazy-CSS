@@ -1,7 +1,7 @@
 .flex { display: flex; } 
 .grid { display: grid;}
 .fixed { position: fixed;}
-.hide { display: none;}
+.hide { display: none !important;}
 .sticky{ position: sticky;}
 .inline-flex { display: inline-flex; } 
 .align-c { align-items: center; } 
