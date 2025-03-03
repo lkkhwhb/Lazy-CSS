@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Try parsing the entire content as a single JSON object first
             try {
                 config = JSON.parse(configText);
-                console.log("Loaded config:", config);
+            
             } catch (e) {
                 // If that fails, try the line-by-line approach as fallback
                 const configObjects = configText.split('\n').filter(obj => obj.trim() !== '');
@@ -188,5 +188,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     styleElement.textContent = cssRules;
-    console.log("Generated CSS rules:", cssRules);
+    console.log("Lazy CSS should not be used via link for development purpose.");
 });
