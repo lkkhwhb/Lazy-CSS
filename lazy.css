@@ -3,6 +3,7 @@
 .fixed { position: fixed;}
 .hide { display: none !important;}
 .sticky{ position: sticky;}
+.no-outline { outline: none;}
 .inline-flex { display: inline-flex; } 
 .align-c { align-items: center; } 
 .row { flex-direction: row;}
