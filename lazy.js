@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const configKey = match[2];
                 const value = config[configKey]; // Get value from config
                 
-                console.log(`Processing class: ${cls}, key: ${configKey}, value:`, value);
+            
 
                 if (value !== undefined) {
                     let cssProperty = "";
