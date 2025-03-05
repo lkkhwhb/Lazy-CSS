@@ -4,15 +4,17 @@ document.addEventListener("DOMContentLoaded", function () {
     let cssRules = "";
     let config = {};
     const lazyConfigElement = document.getElementById('lazy-config');
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://bhargavxyz738.github.io/Lazy-CSS/nonredable.css";
+    document.head.appendChild(link);
     if (lazyConfigElement) {
         try {
             const configText = lazyConfigElement.textContent.trim();
             try {
-                config = JSON.parse(configText);
-            
+                config = JSON.parse(configText);  
             } catch (e) {
-                const configObjects = configText.split('\n').filter(obj => obj.trim() !== '');
-                
+                const configObjects = configText.split('\n').filter(obj => obj.trim() !== ''); 
                 configObjects.forEach(jsonString => {
                     try {
                         const parsedConfig = JSON.parse(jsonString);
@@ -35,16 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
             let match;
             match = cls.match(/^hw-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { height: ${match[1]}; width: ${match[1]}; }\n`;
-            
             match = cls.match(/^(h|w)-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { ${match[1] === "h" ? "height" : "width"}: ${match[2]}; }\n`;
-
             match = cls.match(/^(bg|c|border|borderW|borderS|borderC|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
             if (match) {
                 const prefix = match[1];
                 const configKey = match[2];
-                const value = config[configKey]; 
-                
+                const value = config[configKey];  
                 if (value !== undefined) {
                     let cssProperty = "";
                     let needsPosition = false;
@@ -145,36 +144,27 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             match = cls.match(/^bg-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { background-color: ${match[1]}; }\n`;
-
             match = cls.match(/^c-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { color: ${match[1]}; }\n`;
-
             match = cls.match(/^round-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border-radius: ${match[1]}; }\n`;
-
             match = cls.match(/^(ml|m|mr|mt|mb)-\[(.+?)\]$/);
             if (match) {
                 let marginSide = { ml: "margin-left", m: "margin", mr: "margin-right", mt: "margin-top", mb: "margin-bottom" }[match[1]];
                 cssRules += `.${safeClass} { ${marginSide}: ${match[2]}; }\n`;
             }
-
             match = cls.match(/^(pl|p|pr|pt|pb)-\[(.+?)\]$/);
             if (match) {
                 let paddingSide = { pl: "padding-left", pr: "padding-right", p: "padding", pt: "padding-top", pb: "padding-bottom" }[match[1]];
                 cssRules += `.${safeClass} { ${paddingSide}: ${match[2]}; }\n`;
             }
-
             match = cls.match(/^(l|r|t|b)-\[(.+?)\]$/);
             if (match) {
                 let positionSide = { l: "left", r: "right", t: "top", b: "bottom" }[match[1]];
                 cssRules += `.${safeClass} { ${positionSide}: ${match[2]}; position: absolute; }\n`;
             }
-
             match = cls.match(/^fs-\[(.+?)\]$/);
-            if (match) cssRules += `.${safeClass} { font-size: ${match[1]}; }\n`;
-            
-            
-            
+            if (match) cssRules += `.${safeClass} { font-size: ${match[1]}; }\n`; 
             match = cls.match(/^border-(.+?)$/);
             if (match) {
                const borderValue = match[1];
@@ -186,27 +176,16 @@ document.addEventListener("DOMContentLoaded", function () {
                cssRules += `.${safeClass} { border: ${borderValue}; }\n`;
             }
             }
-
             match = cls.match(/^borderC-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border-color: ${match[1]}; }\n`;
-
             match = cls.match(/^borderW-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border-width: ${match[1]}; }\n`;
-
-            
             match = cls.match(/^borderS-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border-style: ${match[1]}; }\n`;
-            
             match = cls.match(/^gap-\[(.+?)\]$/);
-            if (match) cssRules += `.${safeClass} { gap: ${match[1]}; }\n`;
-            
+            if (match) cssRules += `.${safeClass} { gap: ${match[1]}; }\n`; 
         });
     });
-    let link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://bhargavxyz738.github.io/Lazy-CSS/nonredable.css"; // THE LINK MAY CHANGE BY THE DEVELOPER.
-    document.head.appendChild(link);
-
     styleElement.textContent = cssRules;
     console.log("Hello and welcome to Lazy CSS! This is an early version, so it may contain bugs. For development, you can use the CDN links provided. However, for production, it’s recommended to download the CSS and JS files directly from GitHub. Thank you, and happy styling with Lazy CSS!");
 });
