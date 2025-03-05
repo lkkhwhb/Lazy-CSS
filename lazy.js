@@ -3,27 +3,20 @@ document.addEventListener("DOMContentLoaded", function () {
     document.head.appendChild(styleElement);
     let cssRules = "";
     let config = {};
-
-    // 1. Find the lazy-config element
     const lazyConfigElement = document.getElementById('lazy-config');
-
-    // 2. Parse the JSON Data and store in config
     if (lazyConfigElement) {
         try {
             const configText = lazyConfigElement.textContent.trim();
-            
-            // Try parsing the entire content as a single JSON object first
             try {
                 config = JSON.parse(configText);
             
             } catch (e) {
-                // If that fails, try the line-by-line approach as fallback
                 const configObjects = configText.split('\n').filter(obj => obj.trim() !== '');
                 
                 configObjects.forEach(jsonString => {
                     try {
                         const parsedConfig = JSON.parse(jsonString);
-                        config = { ...config, ...parsedConfig }; // Merge into the main config object
+                        config = { ...config, ...parsedConfig };
                     } catch (error) {
                         console.error("Error parsing JSON config:", error, jsonString);
                     }
@@ -33,32 +26,25 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error processing lazy-config:", error);
         }
     }
-
     function escapeClassName(className) {
         return className.replace(/([\[\]\{\}])/g, '\\$1');
     }
-
     document.querySelectorAll("*").forEach(element => {
         element.classList.forEach(cls => {
             let safeClass = escapeClassName(cls);
             let match;
-
-            // Height & Width (existing logic - square brackets)
             match = cls.match(/^hw-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { height: ${match[1]}; width: ${match[1]}; }\n`;
             
             match = cls.match(/^(h|w)-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { ${match[1] === "h" ? "height" : "width"}: ${match[2]}; }\n`;
 
-            // Process curly braces styles
-            match = cls.match(/^(bg|c|border|borderW|borderS|borderC|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
+            match = cls.match(/^(bg|c|gap|border|borderW|borderS|borderC|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
             if (match) {
                 const prefix = match[1];
                 const configKey = match[2];
-                const value = config[configKey]; // Get value from config
+                const value = config[configKey]; 
                 
-            
-
                 if (value !== undefined) {
                     let cssProperty = "";
                     let needsPosition = false;
@@ -66,6 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     switch (prefix) {
                         case "bg":
                             cssProperty = "background-color";
+                            break;
+                        case "gap":
+                            cssProperty = "gap";
                             break;
                         case "c":
                             cssProperty = "color";
@@ -135,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             break;
                         default:
                             console.warn(`Unknown prefix: ${prefix} for class ${cls}`);
-                            return; // Skip this iteration
+                            return;
                     }
                     
                     if (needsPosition) {
@@ -147,8 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.warn(`Config key "${configKey}" not found for class "${cls}"`);
                 }
             }
-
-            // Compound property handling (e.g., p-[8px 16px])
             match = cls.match(/^p-\[(.+?\s+.+?)\]$/);
             if (match && match[1].includes(" ")) {
                 const values = match[1].split(" ");
@@ -157,10 +144,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else if (values.length === 4) {
                     cssRules += `.${safeClass} { padding: ${values[0]} ${values[1]} ${values[2]} ${values[3]}; }\n`;
                 }
-                return; // Skip further padding processing
+                return;
             }
-
-            // Existing logic - square brackets styles
             match = cls.match(/^bg-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { background-color: ${match[1]}; }\n`;
 
