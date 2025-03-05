@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             match = cls.match(/^(h|w)-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { ${match[1] === "h" ? "height" : "width"}: ${match[2]}; }\n`;
 
-            match = cls.match(/^(bg|c|gap|border|borderW|borderS|borderC|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
+            match = cls.match(/^(bg|c|border|borderW|borderS|borderC|round|ml|m|mr|mt|mb|pl|p|pr|pt|pb|l|r|t|b|fs)-\{(.+?)\}$/);
             if (match) {
                 const prefix = match[1];
                 const configKey = match[2];
@@ -52,9 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     switch (prefix) {
                         case "bg":
                             cssProperty = "background-color";
-                            break;
-                        case "gap":
-                            cssProperty = "gap";
                             break;
                         case "c":
                             cssProperty = "color";
@@ -200,6 +197,8 @@ document.addEventListener("DOMContentLoaded", function () {
             match = cls.match(/^borderS-\[(.+?)\]$/);
             if (match) cssRules += `.${safeClass} { border-style: ${match[1]}; }\n`;
             
+            match = cls.match(/^gap-\[(.+?)\]$/);
+            if (match) cssRules += `.${safeClass} { gap: ${match[1]}; }\n`;
             
         });
     });
