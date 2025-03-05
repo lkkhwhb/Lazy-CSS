@@ -8,46 +8,77 @@ document.addEventListener("DOMContentLoaded",()=>{
             try{Object.assign(config,JSON.parse(s))}catch(e){console.error("Error parsing JSON:",e,s)}
         })
     }catch(e){console.error("Error processing lazy-config:",e)}
-    const escapeCls=cls=>cls.replace(/([#%\[\]{}()|*?+.^$])/g,'\\$1'),propMap={
+    const escapeCls=cls=>cls.replace(/([#%(),\[\]{}|*?+.^$])/g,'\\$1'),propMap={
         bg:'background-color',c:'color',round:'border-radius',ml:'margin-left',m:'margin',mr:'margin-right',
         mt:'margin-top',mb:'margin-bottom',pl:'padding-left',p:'padding',pr:'padding-right',pt:'padding-top',
         pb:'padding-bottom',l:{p:'left',pos:1},r:{p:'right',pos:1},t:{p:'top',pos:1},b:{p:'bottom',pos:1},
-        fs:'font-size',border:'border'
+        fs:'font-size',border:'border',gap:'gap'
     },sideMap={ml:'margin-left',mr:'margin-right',mt:'margin-top',mb:'margin-bottom',m:'margin',
         pl:'padding-left',pr:'padding-right',pt:'padding-top',pb:'padding-bottom',p:'padding'};
     let css='';
+    
+    const parseStyle=style=>{
+        let rule='',match;
+        style=style.replace(/_/g,' ');
+        
+        if(match=style.match(/^(hw|mp)-\[(.*?)\]$/)){
+            const[type,vals]=[match[1],match[2].split(',').map(v=>v.trim())];
+            if(type==='hw'){
+                const[h,w]=vals.length>1?vals:[vals[0],vals[0]];
+                rule+=`height:${h};width:${w};`;
+            }
+            else if(type==='mp'){
+                const[m,p]=vals.length>1?vals:[vals[0],vals[0]];
+                rule+=`margin:${m};padding:${p};`;
+            }
+        }
+        else if(match=style.match(/^(bg|c|round|fs|border|gap)-\[(.*?)\]$/)){
+            rule+=`${propMap[match[1]]}:${match[2]};`;
+        }
+        else if(match=style.match(/^(ml|mr|mt|mb|m|pl|pr|pt|pb|p)-\[(.*?)\]$/)){
+            rule+=`${sideMap[match[1]]}:${match[2]};`;
+        }
+        else if(match=style.match(/^(l|r|t|b)-\[(.*?)\]$/)){
+            rule+=`${match[1]==='l'?'left':match[1]==='r'?'right':match[1]==='t'?'top':'bottom'}:${match[2]};position:absolute;`;
+        }
+        else if(match=style.match(/^(\w+)-\{(.*?)\}$/)){
+            const[p,key]=[match[1],match[2]],val=config[key];
+            if(!val)return '';
+            const pm=propMap[p];
+            if(!pm)return '';
+            const[prop,pos]=typeof pm==='object'?[pm.p,pm.pos]:[pm,0];
+            rule+=`${prop}:${val}${pos?';position:absolute':''};`;
+        }
+        else if(match=style.match(/^p-\[(.*?)\]$/)){
+            const v=match[1].split(' ');
+            rule+=`padding:${v.length===2?`${v[0]} ${v[1]}`:v.length===4?v.join(' '):v[0]};`;
+        }
+        return rule;
+    };
+
     document.querySelectorAll("*").forEach(el=>{
         el.classList.forEach(cls=>{
-            const sCls=escapeCls(cls),m=cls.match(/^(hw|h|w|bg|c|round|fs|border|gap)-\[(.*?)\]$/);
-            if(m){
-                const[p,v]=[m[1],m[2]];
-                if(p==='hw')css+=`.${sCls}{height:${v};width:${v};}\n`;
-                else if(p==='h'||p==='w')css+=`.${sCls}{${p==='h'?'height':'width'}:${v};}\n`;
-                else if(p==='bg'||p==='c'||p==='round'||p==='fs'||p==='gap')css+=`.${sCls}{${{
-                    bg:'background-color',c:'color',round:'border-radius',fs:'font-size',gap:'gap'}[p]}:${v};}\n`;
-                else if(p==='border')css+=`.${sCls}{border:${v.replace(/_/g,' ')};}\n`;
+            const pseudoMatch=cls.match(/^(hover|active)-\((.*?)\)$/);
+            if(pseudoMatch){
+                const[pseudo,styles]=[pseudoMatch[1],pseudoMatch[2]];
+                let combined='';
+                styles.split(',').forEach(s=>{
+                    combined+=parseStyle(s.trim());
+                });
+                if(combined){
+                    const escaped=escapeCls(cls);
+                    css+=`.${escaped}:${pseudo}{${combined}}`;
+                }
             }
-            const m2=cls.match(/^(ml|mr|mt|mb|m|pl|pr|pt|pb|p)-\[(.+?)\]$/);
-            if(m2)css+=`.${sCls}{${sideMap[m2[1]]}:${m2[2]};}\n`;
-            const m3=cls.match(/^(l|r|t|b)-\[(.+?)\]$/);
-            if(m3)css+=`.${sCls}{${m3[1]==='l'?'left':m3[1]==='r'?'right':m3[1]==='t'?'top':'bottom'}:${m3[2]};position:absolute;}\n`;
-            const m4=cls.match(/^(\w+)-\{(.+?)\}$/);
-            if(m4){
-                const[p,key]=[m4[1],m4[2]],val=config[key];
-                if(val===void 0)return console.warn(`Config "${key}" missing for "${cls}"`);
-                const pm=propMap[p];
-                if(!pm)return console.warn(`Unknown prefix: ${p} in ${cls}`);
-                const [prop,pos]=typeof pm==='object'?[pm.p,pm.pos]:[pm,0];
-                css+=`.${sCls}{${prop}:${val}${pos?';position:absolute':''};}\n`;
-            }
-            const m5=cls.match(/^p-\[(.+?)\]$/);
-            if(m5){
-                const v=m5[1].split(' ');
-                css+=v.length===2?`.${sCls}{padding:${v[0]} ${v[1]};}\n`:
-                    v.length===4?`.${sCls}{padding:${v.join(' ')};}\n`:'';
+            else{
+                const rule=parseStyle(cls);
+                if(rule){
+                    const escaped=escapeCls(cls);
+                    css+=`.${escaped}{${rule}}`;
+                }
             }
         })
     });
     style.textContent=css;
-    console.log("Hello and welcome to Lazy CSS! This is an early version, so it may contain bugs. For development, you can use the CDN links provided. However, for production, it’s recommended to download the CSS and JS files directly from GitHub. Thank you, and happy styling with Lazy CSS!");
+    console.log("Lazy CSS initialized successfully!");
 });
