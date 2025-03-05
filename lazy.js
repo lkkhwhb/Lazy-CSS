@@ -202,6 +202,10 @@ document.addEventListener("DOMContentLoaded", function () {
             
         });
     });
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://bhargavxyz738.github.io/Lazy-CSS/nonredable.css"; // THE LINK MAY CHANGE BY THE DEVELOPER.
+    document.head.appendChild(link);
 
     styleElement.textContent = cssRules;
     console.log("Hello and welcome to Lazy CSS! This is an early version, so it may contain bugs. For development, you can use the CDN links provided. However, for production, it’s recommended to download the CSS and JS files directly from GitHub. Thank you, and happy styling with Lazy CSS!");
