@@ -147,8 +147,8 @@ Lazy CSS provides a wide range of utility classes for common CSS properties. Her
     *   `.min-w-0`, `.min-w-full`, `.max-w-full`: Min/Max width utilities.
     *   `.min-h-0`, `.min-h-full`, `.min-h-screen`, `.max-h-full`, `.max-h-screen`: Min/Max height utilities.
 *   **Overflow:**
-    *   `.overflow-hidden`, `.overflow-auto`, `.overflow-scroll`: Overflow utilities.
-    *   `.overflow-x-auto`, `.overflow-y-hidden`:  Axis-specific overflow utilities.
+    *   `.hide-flow`, `.overflow-auto`, `.overflow-scroll`: Overflow utilities.
+    *   `.auto-flow`, `.overflow-y-hidden`:  Axis-specific overflow utilities.
     *   `.hide-scrollbar`: Utility to hide scrollbars (webkit and ms).
 *   **Cursor:**
     *   `.pointer`: `cursor: pointer;`
@@ -156,6 +156,8 @@ Lazy CSS provides a wide range of utility classes for common CSS properties. Her
 *   **Positioning Helpers:**
     *   `.absolute-c`: Absolutely center an element.
     *   `.c`: Center content using flexbox (horizontally and vertically).
+    *   `body-base` : Applies global variables such as flexbox,bordered-box, no margin and padding, Roboto font and 100dvh.
+    *   `body-c` : Has everything which `body-bas` has but also centers the child elements using flexbox.
 *   **Z-Index:**
     *   `.z-0`, `.z-10`, `.z-20`, `.z-30`, `.z-40`, `.z-50`, `.z-auto`: Z-index utilities.
 *   **Aspect Ratio:**
@@ -170,9 +172,9 @@ Lazy CSS provides a wide range of utility classes for common CSS properties. Her
 **Example:**
 
 ```html
-<div class="flex justify-between items-center p-4 bg-gray-100 rounded-md">
-  <h2 class="text-xl font-semibold">Dashboard</h2>
-  <button class="bg-blue-500 hover-bg-blue-700 text-white font-bold py-2 px-4 rounded">
+<div class="flex justify-between align-c p-[5px] bg-gray-100 round-[20px]">
+  <h2 class="fs-[28px] semibold">Dashboard</h2>
+  <button class="bg-blue-500 hover-(bg-blue-700) c-[white] bold p-[5px] rounded">
     Add New
   </button>
 </div>
@@ -193,7 +195,7 @@ Each palette comes with shades from `50` to `950`.  You can use these color pale
 **Example:**
 
 ```html
-<button class="bg-green-500 hover-bg-green-700 c-white border-2 border-green-600 rounded-lg py-2 px-4">
+<button class="bg-green-500 hover-(bg-green-700) c-[white] border-[2px_solid_green] round-[40px] p-[4px]">
   Save Changes
 </button>
 ```
@@ -210,7 +212,7 @@ For properties like height/width and margin/padding, you can use shorthand class
 **Example:**
 
 ```html
-<div class="hw-[300px] mp-[1rem] bg-white border border-gray-200 rounded-md overflow-hidden">
+<div class="hw-[300px] mp-[1rem] bg-white border border-gray-200 round-[40px] flow-hide">
   {/* Content */}
 </div>
 ```
@@ -227,7 +229,7 @@ You can combine multiple utility classes within the parentheses, separated by co
 **Example:**
 
 ```html
-<button class="bg-blue-500 hover-(bg-blue-700, c-white) active-(bg-blue-800, border-2 border-blue-900) text-white font-bold py-2 px-4 rounded">
+<button class="bg-blue-500 hover-(bg-blue-700, c-white) active-(bg-blue-800, border-[2px solid blue]) c-[white] bold p-[4px] round-[20px]">
   Click Me
 </button>
 ```
@@ -240,21 +242,17 @@ Lazy CSS can be configured to extend or modify its behavior. You can configure i
 
 ### 1. `<script type="lazy-config">` (HTML)
 
-In your HTML file, you can add a `<script>` tag with the type `lazy-config`. Inside this tag, you can write JSON to define your configuration.
+In your HTML file, you can add a hidden div with id `#lazy-config`. Inside this div, you can write JSON to define your configuration.
 
 ```html
-<head>
-  <link rel="stylesheet" href="https://bhargavxyz738.github.io/Lazy-CSS/nonredable.css">
-  <script type="lazy-config">
-    {
-      "customSpacing": "2rem",
-      "primaryColor": "#007bff"
-    }
-  </script>
+ <head>
   <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js"></script>
 </head>
 <body>
-  <div class="m-{customSpacing} bg-{primaryColor} c-white p-4">
+   <div hidden id="lazy-config">
+     {"customSpacing":"5px", "primaryColor":"orange"}
+   </div>
+  <div class="m-{customSpacing} bg-{primaryColor} c-[white]">
     {/* Content using configured values */}
   </div>
 </body>
