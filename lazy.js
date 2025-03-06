@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return rule;
             }).join('');
             if (combined) {
-                console.log(`Generated pseudo-class: ${cls} (${pseudoType} state)`);
                 css.push(`.${escapeCls(cls)}:${pseudoType}{${combined}}`);}}
         else {
             const style = cls.replace(/_/g, ' ');
