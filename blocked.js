@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const lazyConfig = document.getElementById('lazy-config');
     if (lazyConfig) try {
         lazyConfig.textContent.trim().split('\n').filter(l => l).forEach(s => {
-            try { Object.assign(config, JSON.parse(s)) } catch (e) { console.error("Error parsing JSON:", e, s) });
+            try { Object.assign(config, JSON.parse(s)) } catch (e) { console.error("Error parsing JSON:", e, s)}
+            );
     } catch (e) { console.error("Error processing lazy-config:", e) }
     const propMap = {
         bg: 'background-color', c: 'color', round: 'border-radius', ml: 'margin-left', m: 'margin', mr: 'margin-right',
