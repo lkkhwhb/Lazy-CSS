@@ -236,7 +236,7 @@ You can combine multiple utility classes within the parentheses, separated by co
 
 In this example, on hover, the background color will change to `blue-700` and the text color will become `white`. When active, the background will be `blue-800` and a `2px` border with `blue-900` color will be added.
 
-## ⚙️ Configuration
+## Configuration
 
 Lazy CSS can be configured to extend or modify its behavior. You can configure it using two methods:
 
