@@ -57,17 +57,14 @@ const LazyCSSProvider = ({ children, configData = {} }) => {
         }
       }
     };
-    // Handle height/width or margin/padding pattern
     if (match = s.match(/^(hw|mp)-\[(.*?)\]$/)) {
       [type, vals] = [match[1], match[2].split(',').map(v => v.trim())];
       const [a, b] = vals.length > 1 ? vals : [vals[0], vals[0]];
       rule = type === 'hw' ? `height:${a};width:${b};` : `margin:${a};padding:${b};`;
     } 
-    // Handle other properties with values in brackets
     else if (match = s.match(new RegExp(`^(${Object.keys(propMap).join('|')})-\\[(.*?)\\]$`))) {
       addProp(match[1], match[2]);
     } 
-    // Handle config values in braces
     else if (match = s.match(/^(\w+)-\{(.*?)\}$/)) {
       if (configRef.current[match[2]]) {
         addProp(match[1], configRef.current[match[2]]);
@@ -78,8 +75,6 @@ const LazyCSSProvider = ({ children, configData = {} }) => {
   const generateRule = (cls) => {
     if (processedRef.current.has(cls)) return '';
     processedRef.current.add(cls);
-    
-    // Handle pseudo-classes
     const pseudoMatch = cls.match(/^(hover|active)-\((.*?)\)$/);
     if (pseudoMatch) {
       const combined = pseudoMatch[2].split(',').map(parseStyle).join('');
@@ -103,19 +98,15 @@ const LazyCSSProvider = ({ children, configData = {} }) => {
       setCss(prevCss => [...prevCss, ...newRules]);
     }
   };
-  // Update configuration when changed
   useEffect(() => {
     configRef.current = configData;
   }, [configData]);
-  // Initial processing and mutation observer setup
   useEffect(() => {
-    // Load the external CSS file
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://bhargavxyz738.github.io/Lazy-CSS/nonredable.css';
+    link.href = 'https://bhargavxyz738.github.io/Lazy-CSS/lazy.css';
     document.head.appendChild(link);
     processClasses(document.querySelectorAll('*'));
-    // Set up mutation observer
     const observer = new MutationObserver(mutations => {
       const elements = new Set();
       mutations.forEach(({ addedNodes, attributeName, target }) => {
