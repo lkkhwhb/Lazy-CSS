@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2025 Bhargav
+ *
+ * Permission is granted to anyone to use, modify, distribute, and share this code 
+ * for any purpose, personal or commercial, without any restrictions or conditions.
+ * No attribution is required, but it is appreciated.
+ *
+ * This software is provided "as is", without warranty of any kind, express or implied, 
+ * including but not limited to the warranties of merchantability, fitness for a 
+ * particular purpose, and noninfringement. In no event shall the author be liable 
+ * for any claim, damages, or other liability arising from the use of this software.
+ *
+ * Feel free to contribute and improve the code!
+ */
 document.addEventListener("DOMContentLoaded", () => {
     const config = {}, css = [], processed = new Set();
     const propMap = {
