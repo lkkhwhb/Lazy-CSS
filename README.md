@@ -240,7 +240,7 @@ In this example, on hover, the background color will change to `blue-700` and th
 
 Lazy CSS can be configured to extend or modify its behavior. You can configure it using two methods:
 
-### 1. `<script type="lazy-config">` (HTML)
+### 1. `<div hidden id="lazy-config"></div>` (HTML)
 
 In your HTML file, you can add a hidden div with id `#lazy-config`. Inside this div, you can write JSON to define your configuration.
 
