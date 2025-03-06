@@ -13,8 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         bg: 'background-color', c: 'color', round: 'border-radius', ml: 'margin-left', m: 'margin', mr: 'margin-right',
         mt: 'margin-top', mb: 'margin-bottom', pl: 'padding-left', p: 'padding', pr: 'padding-right', pt: 'padding-top',
         pb: 'padding-bottom', l: { p: 'left', pos: 1 }, r: { p: 'right', pos: 1 }, t: { p: 'top', pos: 1 }, b: { p: 'bottom', pos: 1 },
-        fs: 'font-size', border: 'border', gap: 'gap'
-    };
+        fs: 'font-size', border: 'border', gap: 'gap'};
     const escapeCls = cls => cls.replace(/([#%(),\[\]{}|*?+.^$])/g, '\\$1');
     new Set([...document.querySelectorAll('*')].flatMap(e => [...e.classList])).forEach(cls => {
         if (processed.has(cls)) return;
@@ -32,32 +31,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         rule += `height:${h};width:${w};`;
                     } else if (type === 'mp') {
                         const [m, p] = vals.length > 1 ? vals : [vals[0], vals[0]];
-                        rule += `margin:${m};padding:${p};`;
-                    }
-                }
+                        rule += `margin:${m};padding:${p};`;}}
                 else if (match = s.match(new RegExp(`^(${Object.keys(propMap).join('|')})-\\[(.*?)\\]$`))) {
                     const [prop, val] = [match[1], match[2]];
                     const propDef = propMap[prop];
-                    rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;
-                }
+                    rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;}
                 else if (match = s.match(/^(\w+)-\{(.*?)\}$/)) {
                     const [prop, key] = [match[1], match[2]];
                     const val = config[key];
                     if (val) {
                         const propDef = propMap[prop];
                         if (propDef) {
-                            rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;
-                        }
-                    }
-                }
+                            rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;}}}
                 return rule;
             }).join('');
-
             if (combined) {
                 console.log(`Generated pseudo-class: ${cls} (${pseudoType} state)`);
-                css.push(`.${escapeCls(cls)}:${pseudoType}{${combined}}`);
-            }
-        }
+                css.push(`.${escapeCls(cls)}:${pseudoType}{${combined}}`);}}
         else {
             const style = cls.replace(/_/g, ' ');
             let rule = '', match;
@@ -68,30 +58,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     rule += `height:${h};width:${w};`;
                 } else if (type === 'mp') {
                     const [m, p] = vals.length > 1 ? vals : [vals[0], vals[0]];
-                    rule += `margin:${m};padding:${p};`;
-                }
-            }
+                    rule += `margin:${m};padding:${p};`;}}
             else if (match = style.match(new RegExp(`^(${Object.keys(propMap).join('|')})-\\[(.*?)\\]$`))) {
                 const [prop, val] = [match[1], match[2]];
                 const propDef = propMap[prop];
-                rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;
-            }
+                rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;}
             else if (match = style.match(/^(\w+)-\{(.*?)\}$/)) {
                 const [prop, key] = [match[1], match[2]];
                 const val = config[key];
                 if (val) {
                     const propDef = propMap[prop];
                     if (propDef) {
-                        rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;
-                    }
-                }
-            }
+                        rule += typeof propDef === 'object' ? `${propDef.p}:${val}${propDef.pos ? ';position:absolute' : ''};` : `${propDef}:${val};`;}}}
             if (rule) {
-                console.log(`Generated class: ${cls}`);
-                css.push(`.${escapeCls(cls)}{${rule}}`);
-            }
-        }
-    });
+                css.push(`.${escapeCls(cls)}{${rule}}`);}}});
     style.textContent = css.join('');
-    console.log("Lazy CSS initialized successfully! Total classes generated:", processed.size);
-});
+    console.log("Hello and welcome to Lazy CSS! This is an early version, so it may contain bugs. For development, you can use the CDN links provided. However, for production, it’s recommended to download the CSS and JS files directly from GitHub. Thank you, and happy styling with Lazy CSS!");});
