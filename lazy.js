@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const escapeCls = cls => cls.replace(/([#%(),\[\]{}|*?+.^$])/g, '\\$1');
     const style = head.appendChild(document.createElement('style'));
     head.appendChild(document.createElement('link')).rel = 'stylesheet';
-    head.lastChild.href = 'https://bhargavxyz738.github.io/Lazy-CSS/nonredable.css';
+    head.lastChild.href = 'https://bhargavxyz738.github.io/Lazy-CSS/lazy.css';
     try {
         const lazyConfig = document.getElementById('lazy-config');
         if (lazyConfig) {
