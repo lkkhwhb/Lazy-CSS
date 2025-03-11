@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-const LazyCSSProvider = ({ children, configData = {} }) => {
+const LazyCSS = ({ children, configData = {} }) => {
   const [css, setCss] = useState([]);
   const processedRef = useRef(new Set());
   const configRef = useRef(configData);
@@ -150,4 +150,4 @@ const LazyCSSProvider = ({ children, configData = {} }) => {
     </>
   );
 };
-export default LazyCSSProvider;
+export default LazyCSS;
