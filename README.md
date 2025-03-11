@@ -56,7 +56,7 @@ For React projects, install the `lazy.jsx` component and wrap your application w
 
 ```jsx
 import React from 'react';
-import LazyCSSProvider from './LazyCSSProvider';
+import LazyCSS from './lazy.jsx';
 const App = () => {
   const config = {
     primaryColor: '#FF8500',
@@ -66,9 +66,9 @@ const App = () => {
   };
 
   return (
-    <LazyCSSProvider configData={config}>
+    <LazyCSS configData={config}>
        {/* Your React components here */}
-    </LazyCSSProvider>
+    </LazyCSS>
   );
 };
 
@@ -80,14 +80,14 @@ You can also use the CDN link for the base styles if you prefer:
 ```jsx
 // Inside your component or index.js
 import React from 'react';
-import LazyCSSProvider from './lazy.jsx';
-import './lazy.css'; // Or use CDN link in index.html
+import LazyCSS from './lazy.jsx';
+import './lazy.css';
 
 function App() {
   return (
-    <LazyCSSProvider>
+    <LazyCSS>
       {/* Your React components here */}
-    </LazyCSSProvider>
+    </LazyCSS>
   );
 }
 
@@ -212,7 +212,7 @@ For properties like height/width and margin/padding, you can use shorthand class
 **Example:**
 
 ```html
-<div class="hw-[300px] mp-[1rem] bg-white border border-gray-200 round-[40px] flow-hide">
+<div class="hw-[300px] mp-[1rem] bg-[white] border border-gray-200 round-[40px] flow-hide">
   {/* Content */}
 </div>
 ```
@@ -262,11 +262,11 @@ In this example, we define `customSpacing` and `primaryColor`. You can then use 
 
 ### 2. `configData` Prop (React)
 
-When using the `LazyCSSProvider` in React, you can pass a `configData` prop to customize the configuration.
+When using the `LazyCSS` in React, you can pass a `configData` prop to customize the configuration.
 
 ```jsx
 import React from 'react';
-import LazyCSSProvider from './lazy.jsx';
+import LazyCSS from './lazy.jsx';
 
 function App() {
   const customConfig = {
@@ -275,12 +275,12 @@ function App() {
   };
 
   return (
-    <LazyCSSProvider configData={customConfig}>
+    <LazyCSS configData={customConfig}>
       <div className="p-{customPadding} bg-{secondaryColor} c-white">
         {/* Content using configured values */}
       </div>
       {/* ... rest of your app */}
-    </LazyCSSProvider>
+    </LazyCSS>
   );
 }
 
@@ -305,7 +305,7 @@ Similar to the HTML configuration, you can define custom values in the `configDa
     *   Sets up a MutationObserver to watch for changes in the DOM and apply styles to new elements or class modifications.
 
 *   **`lazy.jsx`**:
-    *   A React component (`LazyCSSProvider`) that wraps your application to enable Lazy CSS in React projects.
+    *   A React component (`LazyCSS`) that wraps your application to enable Lazy CSS in React projects.
     *   Uses the same core logic as `lazy.js` but adapted for React's component lifecycle and virtual DOM.
     *   Accepts a `configData` prop for configuration in React environments.
     *   Injects generated CSS into a `<style>` tag within the provider component, ensuring styles are applied within the React application scope.
