@@ -52,7 +52,7 @@ Copy and Paste this code inside the `<head>` of your HTML document.
 For React projects, install the `lazy.jsx` component and wrap your application with the `LazyCSSProvider`.
 
 1.  Download `lazy.jsx` and place it in your `src` directory (or wherever you keep your components).
-2.  Import and use the `LazyCSSProvider` in your main application file (e.g., `index.js` or `App.js`):
+2.  Import and use the `LazyCSS` in your main application file (e.g., `index.js` or `App.js`):
 
 ```jsx
 import React from 'react';
