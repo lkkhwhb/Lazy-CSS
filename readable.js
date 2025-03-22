@@ -6,7 +6,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const config = {}, css = [], processed = new Set();
     const propMap = {
-        bg: 'background-color', c: 'color', round: 'border-radius', ml: 'margin-left', m: 'margin', mr: 'margin-right',
+        bg: 'background-color', c: 'color', round: 'border-radius', ml: 'margin-left', m: 'margin', mr: 'margin-right',h: 'height',w:'width',
         mt: 'margin-top', mb: 'margin-bottom', pl: 'padding-left', p: 'padding', pr: 'padding-right', pt: 'padding-top',
         pb: 'padding-bottom', l: { p: 'left', pos: 1 }, r: { p: 'right', pos: 1 }, t: { p: 'top', pos: 1 }, b: { p: 'bottom', pos: 1 },
         fs: 'font-size', border: 'border-color', gap: 'gap'};
