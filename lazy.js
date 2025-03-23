@@ -1,14 +1,10 @@
-/*
- * Copyright (c) 2025 Bhargav
- * Licensed under the MIT License – see the LICENSE file for details.
- */
- document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const config = {}, css = [], processed = new Set();
     const propMap = {
         bg: 'background-color', c: 'color', round: 'border-radius', ml: 'margin-left', m: 'margin', mr: 'margin-right', h: 'height', w: 'width',
         mt: 'margin-top', mb: 'margin-bottom', pl: 'padding-left', p: 'padding', pr: 'padding-right', pt: 'padding-top',
         pb: 'padding-bottom', l: { p: 'left', pos: 1 }, r: { p: 'right', pos: 1 }, t: { p: 'top', pos: 1 }, b: { p: 'bottom', pos: 1 },
-        fs: 'font-size', border: 'border-color', gap: 'gap'
+        fs: 'font-size', border: 'border-color',z: 'z-index',gridCols: 'grid-template-columns', gap: 'gap'
     };
     const colorPalette = {
         orange: { 50: '#fff7ed', 100: '#FFE8D1', 200: '#FFD1A4', 300: '#FFB877', 400: '#FF9F4A', 500: '#FF8500', 600: '#E57700', 700: '#CC6900', 800: '#B35A00', 900: '#994B00', 950: '#431407' },
@@ -34,7 +30,7 @@
         slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' }
     };
     const head = document.head;
-    const escapeCls = cls => cls.replace(/([#%(),\[\]{}|*?+.^$])/g, '\\$1');
+    const escapeCls = cls => cls.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
     const style = head.appendChild(document.createElement('style'));
     head.appendChild(document.createElement('link')).rel = 'stylesheet';
     head.lastChild.href = 'https://bhargavxyz738.github.io/Lazy-CSS/lazy.css';
@@ -45,22 +41,20 @@
                 try { Object.assign(config, JSON.parse(s)) } catch (e) { console.error("Error parsing JSON:", e, s) } });
         }
     } catch (e) { console.error("Error processing lazy-config:", e) }
-    const parseStyle = s => {
+     const parseStyle = s => {
         s = s.replace(/_/g, ' ');
         let rule = '';
         const colorMatch = s.match(/^(bg|c|border)-([a-z]+)-(\d+)$/);
         if (colorMatch) {
             const [_, type, color, shade] = colorMatch;
             const hex = colorPalette[color]?.[shade];
-            if (hex) {
-                rule += `${propMap[type]}:${hex};`;
-            }
-            return rule;
+            if (hex) { return `${propMap[type]}:${hex};` }
+            return '';
         }
         let match, [type, vals] = [];
         const addProp = (prop, val) => {
             const def = propMap[prop];
-            rule += def ? typeof def === 'object' ? `${def.p}:${val}${def.pos ? ';position:absolute' : ''};` : `${def}:${val};` : '';
+            rule += def ? typeof def === 'object' ? `${def?.p}:${val}${def?.pos ? ';position:absolute' : ''};` : `${def}:${val};` : '';
         };
         const borderMatch = s.match(/^(border(?:-[trbl])?)-\[(.*?)\]$/);
         if (borderMatch) {
@@ -87,6 +81,20 @@
             rule += `${borderProperty}:${width} ${style} ${color};`;
             return rule;
         }
+        if(match = s.match(/^gridCols-(\d+)$/)){
+            const cols = parseInt(match[1], 10);
+              if (!isNaN(cols)) {
+                  rule += `grid-template-columns: repeat(${cols}, minmax(0, 1fr));`;
+                  return rule; 
+              }
+          }
+        if(match = s.match(/^zIndex-\[(.*?)\]$/)) {
+            const zIndexValue = match[1];
+            if (!isNaN(parseInt(zIndexValue)) || zIndexValue === 'auto') {
+                rule += `z-index: ${zIndexValue};`;
+                return rule; 
+             }
+        }
         if (match = s.match(/^(hw|mp)-\[(.*?)\]$/)) {
             [type, vals] = [match[1], match[2].split(',').map(v => v.trim())];
             const [a, b] = vals.length > 1 ? vals : [vals[0], vals[0]];
@@ -106,33 +114,36 @@
     };
     const mediaQueries = {};
     let uniqueClassCounter = 0;
-    const generateRule = (cls, isResponsiveContext = false) => { 
-        if (processed.has(cls)) return '';
+   const generateRule = (cls, isResponsiveContext = false) => {
+        if (processed.has(cls)) {
+          return '';
+        }
         processed.add(cls);
-        console.log(`generateRule called with cls: ${cls}, isResponsiveContext: ${isResponsiveContext}`);
-
         const responsiveMatch = cls.match(/^(sm|md|lg|xl)-\((.*?)\)$/);
-        if (responsiveMatch) { 
+        if (responsiveMatch) {
             return ''; 
         }
         const pseudoMatch = cls.match(/^(hover|active)-\((.*?)\)$/);
         if (pseudoMatch) {
-            const combined = pseudoMatch[2].split(',').map(query => generateRule(query, isResponsiveContext)).join(';');
-            return combined ? `.${escapeCls(cls)}:${pseudoMatch[1]}{${combined}}` : '';
-        }
+            const pseudoClass = pseudoMatch[1];
+            const innerClasses = pseudoMatch[2].split(',');
+            let combinedRule = '';
+            for (const innerCls of innerClasses) {
+              const innerRule = parseStyle(innerCls.trim());
+              if (innerRule) {
+                combinedRule += `.${escapeCls(cls)}:${pseudoClass}{${innerRule}}`;
+              }
+            }
+            return combinedRule;
+        };
         const rule = parseStyle(cls);
-        const baseRule = rule ? `.${escapeCls(cls)}{${rule}}` : '';
-        if (baseRule && !isResponsiveContext) {
-            console.log(`Generated Base Rule for ${cls}:\n`, baseRule);
-            return baseRule;
-        }
-        return '';
+        return rule ? `.${escapeCls(cls)}{${rule}}` : '';
     };
     const processClasses = elements => {
         const newRules = [];
         elements.forEach(el => {
             [...el.classList].forEach(cls => {
-                console.log("processClasses - current class:", cls);
+                if(processed.has(cls)) return;
                 const responsiveMatch = cls.match(/^(sm|md|lg|xl)-\((.*?)\)$/);
                 if (responsiveMatch) {
                     const breakpoint = responsiveMatch[1];
@@ -144,13 +155,13 @@
                         }
                         const rule = parseStyle(query);
                         if (rule) {
-                            const mediaRule = `.${escapeCls(uniqueClassName)} { ${rule} }`; 
+                            const mediaRule = `.${escapeCls(uniqueClassName)} { ${rule} }`; // Use escaped class name
                             mediaQueries[breakpoint] = mediaQueries[breakpoint] || [];
-                            mediaQueries[breakpoint].push(mediaRule); 
+                            mediaQueries[breakpoint].push(mediaRule);
                         }
                     });
                 } else {
-                    const rule = generateRule(cls);
+                    const rule = generateRule(cls); 
                     rule && newRules.push(rule);
                 }
             });
@@ -159,8 +170,6 @@
     };
     processClasses(document.querySelectorAll('*'));
     let cssOutput = css.join('');
-    console.log("Base CSS Rules:\n", cssOutput);
-    console.log("Media Queries Object:\n", mediaQueries);
     for (const breakpoint in mediaQueries) {
         const mediaRules = mediaQueries[breakpoint].join('\n');
         cssOutput += `@media (min-width: ${breakpoints[breakpoint]}) {\n${mediaRules}\n}\n`;
@@ -175,7 +184,6 @@
             if (attributeName === 'class') elements.add(target);
         });
         processClasses([...elements]);
-
         let updatedCssOutput = css.join('');
         for (const breakpoint in mediaQueries) {
             const mediaRules = mediaQueries[breakpoint].join('\n');
@@ -183,7 +191,6 @@
         }
         style.textContent = updatedCssOutput;
     });
-
     observer.observe(document.documentElement, {
         childList: true,
         subtree: true,
