@@ -5,6 +5,7 @@
 Lazy CSS is a lightweight, on-demand utility-first CSS framework. Unlike traditional CSS frameworks that load a large stylesheet upfront, Lazy CSS dynamically generates CSS rules only as you use them in your HTML or JSX. This approach results in smaller CSS payloads, improved performance, and a more streamlined development experience.
 
 Inspired by the utility-first approach of Tailwind CSS, Lazy CSS aims to provide a similar level of flexibility and speed but with a "lazy" execution model, making it incredibly efficient for projects of any size. It's perfect for developers who want fine-grained control over styling without writing verbose CSS or dealing with large, pre-compiled stylesheets.
+
 **Configuration:**
 Heres the boiler plate for configuration:
 ```
@@ -24,6 +25,7 @@ Heres the boiler plate for configuration:
         }        
     </div>
 ```
+
 **Key Features:**
 
 *   **On-Demand CSS Generation:**  CSS rules are generated and applied only when the corresponding utility classes are used in your HTML or JSX, ensuring minimal CSS overhead.
