@@ -9,24 +9,31 @@ Inspired by the utility-first approach of Tailwind CSS, Lazy CSS aims to provide
 **Configuration:**
 Heres the boiler plate for configuration:
 ```
-<script id="lazy-config" type="application/json">
+<script id="lazy-config" hidden type="application/json">
         {
-          "theme": {
-            "aliases": {
-               // Add any aliases here if needed
-            },
-            "extend": {
-              "colors": {
-                "primary": {},
-              "spacing": {},
-              "fontFamily": {},
-              "borderRadius": {},
-              "boxShadow": {},
-              "opacity": {}
+            "theme": {
+                "aliases": {
+                    "brand": "primary-600"
+                },
+                "extend": {
+                    "colors": {
+                        "primary": "orange",
+                        "secondary": "blue-700",
+                        "accent": "#FF00FF",
+                        "danger": "red"
+                    },
+                    "spacing": {},
+                    "borderRadius": { 
+                        "lg": "0.5rem",
+                        "a": "40px"
+                    },
+                    "height": {     
+                        "apple": "40px"
+                    }
+                }
             }
-          }
         }
-        </script>
+    </script>
 ```
 
 **Key Features:**
