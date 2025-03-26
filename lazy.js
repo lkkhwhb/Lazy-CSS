@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
         slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' }
     };
     const head = document.head;
-    const escapeCls = cls => cls.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const escapeCls = cls => cls.replace(/[-/\\^$*+?.()|[\]{},]/g, '\\$&');
+                                                
     const style = head.appendChild(document.createElement('style'));
     head.appendChild(document.createElement('link')).rel = 'stylesheet';
     head.lastChild.href = 'https://bhargavxyz738.github.io/Lazy-CSS/lazy.css';
@@ -155,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         const rule = parseStyle(query);
                         if (rule) {
-                            const mediaRule = `.${escapeCls(uniqueClassName)} { ${rule} }`; // Use escaped class name
+                            const mediaRule = `.${escapeCls(uniqueClassName)} { ${rule} }`; 
                             mediaQueries[breakpoint] = mediaQueries[breakpoint] || [];
                             mediaQueries[breakpoint].push(mediaRule);
                         }
