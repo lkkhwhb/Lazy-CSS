@@ -9,7 +9,7 @@ Inspired by the utility-first approach of Tailwind CSS, Lazy CSS aims to provide
 **Configuration:**
 Heres the boiler plate for configuration:
 ```
-<div hidden id="lazycss-config">
+<div hidden id="lazy-config">
         CONFIGURATION = {
           theme: {
             aliases: {},
@@ -22,8 +22,8 @@ Heres the boiler plate for configuration:
               opacity: {},
             }
           }
-        }        
-    </div>
+        }
+</div>
 ```
 
 **Key Features:**
