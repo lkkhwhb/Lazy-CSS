@@ -12,6 +12,7 @@ Heres the boiler plate for configuration:
 window.lazyCssConfig = {
   theme: {
     extend: {
+      colors: { },
       spacing: {},
       borderRadius: {},
       fontSize: {},
