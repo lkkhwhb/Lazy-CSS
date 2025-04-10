@@ -18,7 +18,7 @@ Applicable to lazy2.js only.
         spacing: {},
         borderRadius: {},
         fontSize: {},
-        height: { },
+        height: {},
         width: {}
       }
     }
