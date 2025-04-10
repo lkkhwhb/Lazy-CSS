@@ -8,24 +8,18 @@ Inspired by the utility-first approach of Tailwind CSS, Lazy CSS aims to provide
 
 **Configuration:**
 Heres the boiler plate for configuration:
-```
-<script>
-    window.lazyCssConfig = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#ff6347', 
-            myGray: 'gray-200'  
-          },
-          spacing: {
-            sm: '8px',
-            md: '16px',
-            lg: '24px'
-          }
-        }
-      }
-    };
-  </script>
+```javascript
+window.lazyCssConfig = {
+  theme: {
+    extend: {
+      spacing: {},
+      borderRadius: {},
+      fontSize: {},
+      height: { },
+      width: {}
+    }
+  }
+};
 ```
 
 **Key Features:**
