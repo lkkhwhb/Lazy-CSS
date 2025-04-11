@@ -13,10 +13,7 @@ Here's a boiler plate:-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lazy CSS Example</title>
-    <!-- 
-      IMPORTANT: If using custom config, place it BEFORE the lazy-css.js script.
-    -->
+    <title>Document</title>
     <script>
       window.lazyCssConfig = {
         theme: {
