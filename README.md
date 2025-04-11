@@ -25,7 +25,7 @@ Here's a boiler plate:-
           }
         }
       };
-    </script
+    </script>
     <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js" defer></script> <!-- use lazy2.js for new features -->
 </head>
 <body class="">
