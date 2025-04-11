@@ -23,7 +23,7 @@ Here's a boiler plate:-
             spacing: {},
             borderRadius: {},
             fontSize: {},
-            height: { },
+            height: {},
             width: {}
           }
         },
