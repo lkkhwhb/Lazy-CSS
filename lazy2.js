@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2025 Bhargav
- * Licensed under the MIT License – see the LICENSE file for details.
- */
 document.addEventListener("DOMContentLoaded", () => {
     let config = {};
     if (typeof window.lazyCssConfig === 'object' && window.lazyCssConfig !== null) {
@@ -16,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
         pb: 'padding-bottom', fs: 'font-size', border: 'border-color', z: 'z-index', gap: 'gap',
         l: { p: 'left', pos: true }, r: { p: 'right', pos: true }, t: { p: 'top', pos: true }, b: { p: 'bottom', pos: true },
         gridCols: 'grid-template-columns'
-
     };
     const themeCategories = {
         spacing: ['m', 'p', 'ml', 'pl', 'mr', 'pr', 'mt', 'pt', 'mb', 'pb', 'gap'],
@@ -24,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fontSize: ['fs'],
         height: ['h'],
         width: ['w']
-
     };
     const propToThemeCategory = {};
     for (const category in themeCategories) {
@@ -120,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const aliasTarget = config?.theme?.extend?.colors?.[originalColorName];
         let baseColorNameToUse = originalColorName;
         let shadeToUse = originalShade;
-
         if (aliasTarget && typeof aliasTarget === 'string') {
             if (aliasTarget.startsWith('#') || aliasTarget.startsWith('rgb') || aliasTarget.startsWith('hsl')) {
                 finalColorValue = aliasTarget;
@@ -131,12 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     const aliasShade = aliasParts[2];
                     baseColorNameToUse = aliasBaseColor;
                     shadeToUse = aliasShade || originalShade;
-
                     if (!shadeToUse && colorPalette[baseColorNameToUse]) {
                          shadeToUse = DEFAULT_COLOR_SHADE;
                     }
                     finalColorValue = colorPalette[baseColorNameToUse]?.[shadeToUse];
-
                 } else {
                     console.warn(`Lazy CSS: Unrecognized alias format for "${originalColorName}": "${aliasTarget}". Falling back to original.`);
                      baseColorNameToUse = originalColorName;
@@ -144,19 +135,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
-
         if (!finalColorValue) {
              if (!shadeToUse && colorPalette[baseColorNameToUse]) {
                  shadeToUse = DEFAULT_COLOR_SHADE;
              }
              finalColorValue = colorPalette[baseColorNameToUse]?.[shadeToUse];
         }
-
         if (finalColorValue) {
              finalColorValue = String(finalColorValue).replace(/[;{}]/g, '');
              return `${cssProperty}:${finalColorValue};`;
         }
-
         if (!aliasTarget || (aliasTarget && !finalColorValue)) {
              console.warn(`Lazy CSS: Color "${originalColorName}" or resulting value not found in palette or config.`);
         }
@@ -170,20 +158,15 @@ document.addEventListener("DOMContentLoaded", () => {
         s = s.replace(/_/g, ' ');
         let rule = '';
         let match;
-
         const addProp = (propKey, val, unit = '') => {
-
             const definition = propMap[propKey];
             if (definition) {
                 const property = typeof definition === 'object' ? definition.p : definition;
                 const requiresPosition = typeof definition === 'object' && definition.pos;
-
                 const sanitizedVal = String(val).replace(/[;{}]/g, '');
                 if (!sanitizedVal && sanitizedVal !== '0') return false;
-
                 rule += `${property}:${sanitizedVal}${unit};`;
                 if (requiresPosition) {
-
                     if (!rule.includes('position:absolute;')) {
                          rule += 'position:absolute;';
                     }
@@ -231,10 +214,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (colorInput !== 'currentColor' && colorInput !== 'transparent' && !colorInput.startsWith('#') && !/^(rgb|hsl)a?\(/.test(colorInput) && !colorInput.startsWith('var(') ) {
                 const lazyColorMatch = colorInput.match(/^([a-z]+(?:-[a-z]+)*)(?:-(\d+))?$/);
                 if (lazyColorMatch) {
-
                     const resolved = resolveColor('c', lazyColorMatch[1], lazyColorMatch[2]);
                     if (resolved) {
-
                         finalColor = resolved.substring(resolved.indexOf(':') + 1, resolved.length -1);
                     } else {
                         finalColor = 'currentColor';
@@ -312,18 +293,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
              }
         }
-
         match = s.match(/^([a-z]+(?:-[a-z]+)*)-(.+)$/);
         if (match) {
              const prefix = match[1];
              const valuePart = match[2];
-
              if (pixelPropKeys.has(prefix)) {
-
                  if (/^[0-9.+\-*/\s]+$/.test(valuePart.trim()) && !valuePart.includes('[') && !valuePart.includes(']') && !valuePart.includes('{') && !valuePart.includes('}')) {
                     const calculatedValue = safeCalculate(valuePart);
                     if (calculatedValue !== null) {
-
                         if (addProp(prefix, calculatedValue, 'px')) {
                              styleCache.set(original, rule);
                              return rule;
@@ -367,7 +344,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const mediaQueryMinWidth = breakpoints[breakpoint];
             const escapedOriginalClassName = escapeCls(className);
             let combinedDeclarations = '';
-
             innerClassesString.split(',').map(c => c.trim()).filter(Boolean).forEach(innerCls => {
                 combinedDeclarations += parseStyle(innerCls) || '';
             });
@@ -377,12 +353,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     activeCssRules.add(fullRule);
                     newRulesOutput.add(fullRule);
                     generatedNewRule = true;
-
                     styleCache.set(className, `/* complex media rule */`);
                     activeCssRules.add(`.${escapedOriginalClassName} { /* complex */ }`);
                 }
             } else {
-
                  styleCache.set(className, null);
             }
              return generatedNewRule;
@@ -511,5 +485,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     performInitialScan();
     observe();
-
 });
