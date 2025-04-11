@@ -21,7 +21,9 @@ Here's a boiler plate:-
             colors: {},
             spacing: {},
             fontSize: {},
-            borderRadius: {}
+            borderRadius: {},
+            height: {},
+            width: {}
           }
         }
       };
