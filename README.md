@@ -6,6 +6,36 @@ Lazy CSS is a lightweight, dependency-free JavaScript library that provides an o
 
 It combines a set of **predefined base styles** (`lazy.css`, automatically linked) for common layouts and resets with a powerful **dynamic engine** (`lazy.js`) that parses your classes and generates specific styles for colors, spacing, sizing, responsiveness, pseudo-states, and arbitrary values on the fly.
 
+Here's a boiler plate:-
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazy CSS Example</title>
+    <!-- 
+      IMPORTANT: If using custom config, place it BEFORE the lazy-css.js script.
+    -->
+    <script>
+      window.lazyCssConfig = {
+        theme: {
+          extend: {
+            colors: {},
+            spacing: {},
+            fontSize: {},
+            borderRadius: {}
+          }
+        }
+      };
+    </script
+    <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js" defer></script> <!-- use lazy2.js for new features -->
+</head>
+<body class="">
+    
+</body>
+</html>
+```
 ## Key Features
 
 *   **Client-Side Dynamic Generation:** CSS rules are generated in the browser only for the utility classes detected in your HTML.
