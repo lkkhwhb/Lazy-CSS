@@ -309,4 +309,4 @@ Contributions are welcome! Please feel free to fork the repository, create a bra
 
 ## License
 
-Lazy CSS is open-source software licensed under the [MIT License](LICENSE). (Assuming MIT based on the CSS comment - please create a LICENSE file in your repository).
+Lazy CSS is open-source software licensed under the [MIT License](LICENSE).
