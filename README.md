@@ -16,6 +16,7 @@ Here's a boiler plate:-
     <title>Document</title>
     <script>
         window.lazyCssConfig = {
+        screens: {},
         theme: {
           aliases:{},
           extend: {
