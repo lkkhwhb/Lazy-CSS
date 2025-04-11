@@ -15,20 +15,22 @@ Here's a boiler plate:-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script>
-      window.lazyCssConfig = {
+        window.lazyCssConfig = {
         theme: {
+          aliases:{},
           extend: {
             colors: {},
             spacing: {},
-            fontSize: {},
             borderRadius: {},
-            height: {},
+            fontSize: {},
+            height: { },
             width: {}
           }
-        }
+        },
+        plugins: []
       };
     </script>
-    <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js" defer></script> <!-- use lazy2.js for new features -->
+    <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy2.js" defer></script>
 </head>
 <body class="">
     
