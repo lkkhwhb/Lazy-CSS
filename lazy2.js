@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let config = {};
     if (typeof window.lazyCssConfig === 'object' && window.lazyCssConfig !== null) {
         config = window.lazyCssConfig;
-        console.log("Lazy CSS: User configuration loaded from window.lazyCssConfig:", config);
     } else {
         console.log("Lazy CSS: No window.lazyCssConfig found or invalid. Using default settings.");
     }
@@ -20,16 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
         height: ['h'],
         width: ['w']
     };
-    const propToThemeCategory = {};
-    for (const category in themeCategories) {
-        themeCategories[category].forEach(prop => {
-            propToThemeCategory[prop] = category;
-        });
-    }
-    const pixelPropKeys = new Set([
-        'h', 'w', 'ml', 'm', 'mr', 'mt', 'mb', 'pl', 'p', 'pr', 'pt', 'pb',
-        'round', 'fs', 'gap', 'l', 'r', 't', 'b'
-    ]);
     const colorPalette = {
         orange: { 50: '#fff7ed', 100: '#FFE8D1', 200: '#FFD1A4', 300: '#FFB877', 400: '#FF9F4A', 500: '#FF8500', 600: '#E57700', 700: '#CC6900', 800: '#B35A00', 900: '#994B00', 950: '#431407' },
         black: { 50: '#e6e6e6', 100: '#cccccc', 200: '#999999', 300: '#666666', 400: '#333333', 500: '#1a1a1a', 600: '#0d0d0d', 700: '#080808', 800: '#040404', 900: '#020202', 950: '#000000' },
@@ -53,6 +42,30 @@ document.addEventListener("DOMContentLoaded", () => {
         zinc: { 50: '#fafafa', 100: '#f4f4f5', 200: '#e4e4e7', 300: '#d4d4d8', 400: '#a1a1aa', 500: '#71717a', 600: '#52525b', 700: '#3f3f46', 800: '#27272a', 900: '#18181b', 950: '#09090b' },
         slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' }
     };
+    const propToThemeCategory = {};
+    for (const category in themeCategories) {
+        themeCategories[category].forEach(prop => {
+            propToThemeCategory[prop] = category;
+        });
+    }
+    const pixelPropKeys = new Set([
+        'h', 'w', 'ml', 'm', 'mr', 'mt', 'mb', 'pl', 'p', 'pr', 'pt', 'pb',
+        'round', 'fs', 'gap', 'l', 'r', 't', 'b'
+    ]);
+    if (Array.isArray(config.plugins)) {
+        config.plugins.forEach(plugin => {
+            if (typeof plugin === 'function') {
+                try {
+                    plugin(config, { propMap, themeCategories, propToThemeCategory, pixelPropKeys, colorPalette });
+                } catch (error) {
+                    console.error("Lazy CSS: Plugin execution error:", error);
+                }
+            } else {
+                console.warn("Lazy CSS: Invalid plugin, must be a function.");
+            }
+        });
+    }
+    const definedShorthands = config?.theme?.aliases || {};
     const breakpoints = {
         'sm': '640px', 'md': '768px', 'lg': '1024px', 'xl': '1280px'
     };
@@ -75,25 +88,25 @@ document.addEventListener("DOMContentLoaded", () => {
         if (/^\d/.test(escaped)) {
             escaped = `\\3${escaped.charAt(0)} ${escaped.slice(1)}`;
         } else if (/^-\d/.test(escaped)) {
-             escaped = `\\${escaped.charAt(0)}\\3${escaped.charAt(1)} ${escaped.slice(2)}`;
+            escaped = `\\${escaped.charAt(0)}\\3${escaped.charAt(1)} ${escaped.slice(2)}`;
         } else if (escaped.startsWith('--')) {
-             escaped = `\\-${escaped}`;
-         }
+            escaped = `\\-${escaped}`;
+        }
         escapedClassCache.set(className, escaped);
         return escaped;
     };
     const safeCalculate = (expression) => {
-         try {
+        try {
             const sanitizedExpression = String(expression).replace(/\s+/g, '');
             if (!/^[0-9+\-*/.]+$/.test(sanitizedExpression)) {
-                 if (/^[\+\-\*\/]/.test(sanitizedExpression) || /[\+\-\*\/]$/.test(sanitizedExpression) || /[\+\-\*\/]{2,}/.test(sanitizedExpression)) {
-                     console.warn(`Lazy CSS: Invalid arithmetic expression format "${expression}"`);
-                     return null;
-                 }
-                 if (!/^(\d+(\.\d+)?)(([\+\-\*\/])(\d+(\.\d+)?))*$/.test(sanitizedExpression)) {
+                if (/^[\+\-\*\/]/.test(sanitizedExpression) || /[\+\-\*\/]$/.test(sanitizedExpression) || /[\+\-\*\/]{2,}/.test(sanitizedExpression)) {
+                    console.warn(`Lazy CSS: Invalid arithmetic expression format "${expression}"`);
+                    return null;
+                }
+                if (!/^(\d+(\.\d+)?)(([\+\-\*\/])(\d+(\.\d+)?))*$/.test(sanitizedExpression)) {
                     console.warn(`Lazy CSS: Potentially unsafe or invalid arithmetic expression "${expression}"`);
                     return null;
-                 }
+                }
             }
             const calculate = new Function(`return ${sanitizedExpression}`);
             const result = calculate();
@@ -124,29 +137,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     const aliasShade = aliasParts[2];
                     baseColorNameToUse = aliasBaseColor;
                     shadeToUse = aliasShade || originalShade;
+
                     if (!shadeToUse && colorPalette[baseColorNameToUse]) {
-                         shadeToUse = DEFAULT_COLOR_SHADE;
+                        shadeToUse = DEFAULT_COLOR_SHADE;
                     }
                     finalColorValue = colorPalette[baseColorNameToUse]?.[shadeToUse];
                 } else {
                     console.warn(`Lazy CSS: Unrecognized alias format for "${originalColorName}": "${aliasTarget}". Falling back to original.`);
-                     baseColorNameToUse = originalColorName;
-                     shadeToUse = originalShade;
+                    baseColorNameToUse = originalColorName;
+                    shadeToUse = originalShade;
                 }
             }
         }
         if (!finalColorValue) {
-             if (!shadeToUse && colorPalette[baseColorNameToUse]) {
-                 shadeToUse = DEFAULT_COLOR_SHADE;
-             }
-             finalColorValue = colorPalette[baseColorNameToUse]?.[shadeToUse];
+            if (!shadeToUse && colorPalette[baseColorNameToUse]) {
+                shadeToUse = DEFAULT_COLOR_SHADE;
+            }
+            finalColorValue = colorPalette[baseColorNameToUse]?.[shadeToUse];
         }
         if (finalColorValue) {
-             finalColorValue = String(finalColorValue).replace(/[;{}]/g, '');
-             return `${cssProperty}:${finalColorValue};`;
+            finalColorValue = String(finalColorValue).replace(/[;{}]/g, '');
+            return `${cssProperty}:${finalColorValue};`;
         }
-        if (!aliasTarget || (aliasTarget && !finalColorValue)) {
-             console.warn(`Lazy CSS: Color "${originalColorName}" or resulting value not found in palette or config.`);
+        if (!finalColorValue) {
+            console.warn(`Lazy CSS: Color "${originalColorName}" or resulting value not found in palette or config.`);
         }
         return null;
     };
@@ -168,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 rule += `${property}:${sanitizedVal}${unit};`;
                 if (requiresPosition) {
                     if (!rule.includes('position:absolute;')) {
-                         rule += 'position:absolute;';
+                        rule += 'position:absolute;';
                     }
                 }
                 return true;
@@ -183,8 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 styleCache.set(original, colorRule);
                 return colorRule;
             }
-             styleCache.set(original, null);
-             return null;
+            styleCache.set(original, null);
+            return null;
         }
         if (match = s.match(/^gridCols-(\d+)$/)) {
             const cols = parseInt(match[1], 10);
@@ -196,15 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (match = s.match(/^z-(?:\[(.*?)\]|(\d+|auto))$/)) {
             const zIndexValue = match[1] ?? match[2];
-             const sanitizedZIndex = String(zIndexValue).replace(/[;{}]/g, '');
-             if (sanitizedZIndex && (sanitizedZIndex === 'auto' || /^-?\d+$/.test(sanitizedZIndex))) {
+            const sanitizedZIndex = String(zIndexValue).replace(/[;{}]/g, '');
+            if (sanitizedZIndex && (sanitizedZIndex === 'auto' || /^-?\d+$/.test(sanitizedZIndex))) {
                 rule = `z-index: ${sanitizedZIndex};`;
                 styleCache.set(original, rule);
                 return rule;
             }
         }
         const borderMatch = s.match(/^(border(?:-[trbl])?)-\[(.*?)\]$/);
-        if (borderMatch) {
+         if (borderMatch) {
             const prefix = borderMatch[1];
             const borderValues = borderMatch[2].split(',').map(v => v.trim());
             let width = borderValues[0] || '1px';
@@ -213,13 +227,13 @@ document.addEventListener("DOMContentLoaded", () => {
             let finalColor = 'currentColor';
             if (colorInput !== 'currentColor' && colorInput !== 'transparent' && !colorInput.startsWith('#') && !/^(rgb|hsl)a?\(/.test(colorInput) && !colorInput.startsWith('var(') ) {
                 const lazyColorMatch = colorInput.match(/^([a-z]+(?:-[a-z]+)*)(?:-(\d+))?$/);
-                if (lazyColorMatch) {
-                    const resolved = resolveColor('c', lazyColorMatch[1], lazyColorMatch[2]);
+                 if (lazyColorMatch) {
+                    const resolved = resolveColor('c', lazyColorMatch[1], lazyColorMatch[2]); 
                     if (resolved) {
                         finalColor = resolved.substring(resolved.indexOf(':') + 1, resolved.length -1);
                     } else {
-                        finalColor = 'currentColor';
-                        console.warn(`Lazy CSS: Could not resolve border color "${colorInput}" in class "${original}"`);
+                        finalColor = colorInput;
+                        console.warn(`Lazy CSS: Could not resolve border color "${colorInput}" in class "${original}". Using input directly.`);
                     }
                 } else {
                      finalColor = colorInput;
@@ -228,7 +242,9 @@ document.addEventListener("DOMContentLoaded", () => {
                  finalColor = colorInput;
             }
             let borderProperty = 'border';
-            if (prefix === 'border-t') borderProperty = 'border-top';
+            if (propMap[prefix] && typeof propMap[prefix] === 'string') {
+                 borderProperty = propMap[prefix];
+            } else if (prefix === 'border-t') borderProperty = 'border-top';
             else if (prefix === 'border-r') borderProperty = 'border-right';
             else if (prefix === 'border-b') borderProperty = 'border-bottom';
             else if (prefix === 'border-l') borderProperty = 'border-left';
@@ -249,11 +265,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             rule = `height:${a};width:${b};`;
             if (rule) {
-                 styleCache.set(original, rule);
-                 return rule;
+                styleCache.set(original, rule);
+                return rule;
             }
         }
-         if (match = s.match(/^mp-\[(.*?)\]$/)) {
+        if (match = s.match(/^mp-\[(.*?)\]$/)) {
             const valsStr = match[1];
             const vals = valsStr.split(',').map(v => v.trim().replace(/[;{}]/g, ''));
             const [a, b] = vals.length > 1 ? vals : [vals[0], vals[0]];
@@ -263,69 +279,95 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             rule = `margin:${a};padding:${b};`;
             if (rule) {
-                 styleCache.set(original, rule);
-                 return rule;
+                styleCache.set(original, rule);
+                return rule;
             }
         }
         const generalPropMatch = s.match(new RegExp(`^(${Object.keys(propMap).join('|')})-\\[(.*?)\\]$`));
         if (generalPropMatch) {
-             const propKey = generalPropMatch[1];
-             const innerValue = generalPropMatch[2];
-             const sanitizedInnerValue = String(innerValue).replace(/[;{}]/g, '');
-             if (sanitizedInnerValue.includes(',')) {
-                 const parts = sanitizedInnerValue.split(',').map(p => p.trim());
-                 if (parts.length === 3 && ['+', '-', '*', '/'].includes(parts[1])) {
+            const propKey = generalPropMatch[1];
+            const innerValue = generalPropMatch[2];
+            const sanitizedInnerValue = String(innerValue).replace(/[;{}]/g, '');
+            if (sanitizedInnerValue.includes(',')) {
+                const parts = sanitizedInnerValue.split(',').map(p => p.trim());
+                if (parts.length === 3 && ['+', '-', '*', '/'].includes(parts[1])) {
                     const calcValue = `calc(${parts[0]} ${parts[1]} ${parts[2]})`;
-                     if (addProp(propKey, calcValue)) {
+                    if (addProp(propKey, calcValue)) {
                         styleCache.set(original, rule);
                         return rule;
                     }
-                 } else {
-                      if (addProp(propKey, sanitizedInnerValue)) {
-                        styleCache.set(original, rule);
-                        return rule;
-                      }
-                 }
-             } else {
-                 if (addProp(propKey, sanitizedInnerValue)) {
+                } else {
+                    if (propKey === 'fancyBorder' && propMap[propKey] === 'border') {
+                         const width = parts[0] || '1px';
+                         const styleVal = parts[1] || 'solid';
+                         let colorInput = parts[2] || 'currentColor';
+                         let finalColor = 'currentColor';
+                        if (colorInput !== 'currentColor' && colorInput !== 'transparent' && !colorInput.startsWith('#') && !/^(rgb|hsl)a?\(/.test(colorInput) && !colorInput.startsWith('var(') ) {
+                            const lazyColorMatch = colorInput.match(/^([a-z]+(?:-[a-z]+)*)(?:-(\d+))?$/);
+                            if (lazyColorMatch) {
+                                const resolved = resolveColor('c', lazyColorMatch[1], lazyColorMatch[2]);
+                                if (resolved) {
+                                    finalColor = resolved.substring(resolved.indexOf(':') + 1, resolved.length -1);
+                                } else {
+                                    finalColor = colorInput;
+                                     console.warn(`Lazy CSS: Could not resolve border color "${colorInput}" in class "${original}". Using input directly.`);
+                                }
+                            } else {
+                                 finalColor = colorInput;
+                            }
+                        } else {
+                            finalColor = colorInput;
+                        }
+                         rule = `${propMap[propKey]}:${width} ${styleVal} ${finalColor};`;
+                         styleCache.set(original, rule);
+                         return rule;
+                    }
+                    else if (addProp(propKey, sanitizedInnerValue)) {
+                       styleCache.set(original, rule);
+                       return rule;
+                    }
+                }
+            } else {
+                if (addProp(propKey, sanitizedInnerValue)) {
                     styleCache.set(original, rule);
                     return rule;
                 }
-             }
+            }
         }
         match = s.match(/^([a-z]+(?:-[a-z]+)*)-(.+)$/);
         if (match) {
-             const prefix = match[1];
-             const valuePart = match[2];
-             if (pixelPropKeys.has(prefix)) {
-                 if (/^[0-9.+\-*/\s]+$/.test(valuePart.trim()) && !valuePart.includes('[') && !valuePart.includes(']') && !valuePart.includes('{') && !valuePart.includes('}')) {
+            const prefix = match[1];
+            const valuePart = match[2];
+            if (pixelPropKeys.has(prefix)) {
+               if (/^[0-9.+\-*/\s]+$/.test(valuePart.trim()) && !valuePart.includes('[') && !valuePart.includes(']') && !valuePart.includes('{') && !valuePart.includes('}')) {
                     const calculatedValue = safeCalculate(valuePart);
                     if (calculatedValue !== null) {
+
                         if (addProp(prefix, calculatedValue, 'px')) {
-                             styleCache.set(original, rule);
-                             return rule;
+                            styleCache.set(original, rule);
+                            return rule;
                         }
                     } else {
-                         console.warn(`Lazy CSS: Failed to calculate value for "${original}"`);
+                        console.warn(`Lazy CSS: Failed to calculate value for "${original}"`);
                     }
-                 }
-             }
+                }
+            }
         }
-         if (!rule) {
+        if (!rule) {
             match = s.match(/^([a-z]+(?:-[a-z]+)*)-(.+)$/);
             if (match) {
-                 const propKey = match[1];
-                 const configKey = match[2];
-                 const themeCategory = propToThemeCategory[propKey];
-                 if (themeCategory) {
-                     const configValue = config?.theme?.extend?.[themeCategory]?.[configKey];
-                     if (configValue !== undefined) {
+                const propKey = match[1];
+                const configKey = match[2];
+                const themeCategory = propToThemeCategory[propKey];
+                if (themeCategory) {
+                    const configValue = config?.theme?.extend?.[themeCategory]?.[configKey];
+                    if (configValue !== undefined) {
                         if (addProp(propKey, configValue)) {
                             styleCache.set(original, rule);
                             return rule;
                         }
-                     }
-                 }
+                    }
+                }
             }
         }
         styleCache.set(original, null);
@@ -353,13 +395,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     activeCssRules.add(fullRule);
                     newRulesOutput.add(fullRule);
                     generatedNewRule = true;
-                    styleCache.set(className, `/* complex media rule */`);
-                    activeCssRules.add(`.${escapedOriginalClassName} { /* complex */ }`);
+                    activeCssRules.add(`.${escapedCls} { /* complex */ }`);
                 }
             } else {
-                 styleCache.set(className, null);
+                styleCache.set(className, null);
             }
-             return generatedNewRule;
+            return generatedNewRule;
         }
         const pseudoMatch = className.match(/^(hover|active|focus|visited|focus-within|focus-visible)-\((.*?)\)$/);
         if (pseudoMatch) {
@@ -376,15 +417,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     activeCssRules.add(fullRule);
                     newRulesOutput.add(fullRule);
                     generatedNewRule = true;
-
-                    styleCache.set(className, `/* complex pseudo rule */`);
-                    activeCssRules.add(`.${escapedOriginalClassName} { /* complex */ }`);
+                    activeCssRules.add(`.${escapedCls} { /* complex */ }`);
                 }
             } else {
-
-                 styleCache.set(className, null);
+                styleCache.set(className, null);
             }
-             return generatedNewRule;
+            return generatedNewRule;
         }
         const ruleContent = parseStyle(className);
         if (ruleContent) {
@@ -398,6 +436,40 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return false;
     };
+    const replaceShorthandsInElement = (element) => {
+        if (!element.classList || element.classList.length === 0) {
+            return false;
+        }
+        const originalClasses = Array.from(element.classList);
+        const finalClasses = new Set();
+        let changed = false;
+        originalClasses.forEach(cls => {
+            if (definedShorthands.hasOwnProperty(cls)) {
+                const expansion = definedShorthands[cls];
+                if (typeof expansion === 'string') {
+                    expansion.split(',').forEach(part => {
+                        const trimmedPart = part.trim();
+                        if (trimmedPart) {
+                            finalClasses.add(trimmedPart);
+                        }
+                    });
+                    changed = true;
+                } else {
+                    finalClasses.add(cls);
+                }
+            } else {
+                finalClasses.add(cls);
+            }
+        });
+        if (changed) {
+            const newClassName = Array.from(finalClasses).join(' ');
+            if (element.className !== newClassName) {
+                element.className = newClassName;
+                return true;
+            }
+        }
+        return false;
+    };
     const collectClassesFromNode = (element, targetSet) => {
         if (element.nodeType !== Node.ELEMENT_NODE) return;
         if (element.classList && element.classList.length > 0) {
@@ -406,65 +478,87 @@ document.addEventListener("DOMContentLoaded", () => {
         element.childNodes.forEach(child => collectClassesFromNode(child, targetSet));
     };
     const handleMutations = (mutations) => {
-        const classesToProcess = new Set();
+        const elementsToCheck = new Set();
         for (const mutation of mutations) {
-            if (mutation.type === 'childList') {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                elementsToCheck.add(mutation.target);
+            } else if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
-                        collectClassesFromNode(node, classesToProcess);
+                        elementsToCheck.add(node);
+                        node.querySelectorAll('*').forEach(el => elementsToCheck.add(el));
                     }
                 });
-            } else if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                const targetElement = mutation.target;
-                if (targetElement.nodeType === Node.ELEMENT_NODE && targetElement.classList) {
-
-                     targetElement.classList.forEach(cls => classesToProcess.add(cls));
+            }
+        }
+        if (elementsToCheck.size === 0) {
+            return;
+        }
+        observer.disconnect();
+        let modificationHappened = false;
+        elementsToCheck.forEach(el => {
+            if (replaceShorthandsInElement(el)) {
+                modificationHappened = true;
+            }
+        });
+        observe();
+        const classesToProcess = new Set();
+        elementsToCheck.forEach(el => {
+             if (el.classList && el.classList.length > 0) {
+                  el.classList.forEach(cls => classesToProcess.add(cls));
+             }
+             if (modificationHappened && el.querySelectorAll) {
+                 el.querySelectorAll('*').forEach(childEl => {
+                     if (childEl.classList && childEl.classList.length > 0) {
+                         childEl.classList.forEach(cls => classesToProcess.add(cls));
+                     }
+                 });
+             }
+        });
+        if (classesToProcess.size > 0) {
+            const newRulesGenerated = new Set();
+            classesToProcess.forEach(cls => {
+                generateRuleForClass(cls, newRulesGenerated); 
+            });
+            if (newRulesGenerated.size > 0) {
+                try {
+                    const sheet = style.sheet;
+                    if (sheet) {
+                        const rulesArray = [...newRulesGenerated].join('\n').split(/(?<=\})\s*\n?/);
+                        rulesArray.forEach(ruleString => {
+                            if (ruleString.trim()) {
+                                try {
+                                    sheet.insertRule(ruleString.trim(), sheet.cssRules.length);
+                                } catch (innerError) {
+                                    console.error("Lazy CSS: Error inserting single rule:", innerError, "Rule:", ruleString.trim());
+                                }
+                            }
+                        });
+                    } else {
+                        style.textContent += '\n' + [...newRulesGenerated].join('\n');
+                    }
+                } catch (e) {
+                    console.error("Lazy CSS: Error inserting new CSS rules batch:", e, "Rules:", [...newRulesGenerated].join('\n'));
+                    try { style.textContent += '\n' + [...newRulesGenerated].join('\n'); } catch {}
                 }
             }
         }
-        if (classesToProcess.size === 0) {
-            return;
-        }
-        const newRulesGenerated = new Set();
-        classesToProcess.forEach(cls => {
-             generateRuleForClass(cls, newRulesGenerated);
-        });
-        if (newRulesGenerated.size > 0) {
-             try {
-                 const sheet = style.sheet;
-                 if (sheet) {
-
-                    const rulesArray = [...newRulesGenerated].join('\n').split(/(?<=\})\s*\n?/);
-                    rulesArray.forEach(ruleString => {
-                        if (ruleString.trim()) {
-                             sheet.insertRule(ruleString.trim(), sheet.cssRules.length);
-                        }
-                    });
-                 } else {
-
-                     style.textContent += '\n' + [...newRulesGenerated].join('\n');
-                 }
-             } catch (e) {
-                  console.error("Lazy CSS: Error inserting new CSS rules:", e, "Rules:", [...newRulesGenerated].join('\n'));
-
-                  try { style.textContent += '\n' + [...newRulesGenerated].join('\n'); } catch {}
-             }
-        }
     };
     const performInitialScan = () => {
-        const initialClasses = new Set();
         const allElements = document.querySelectorAll('*');
         allElements.forEach(el => {
-            if (el.classList && el.classList.length > 0) {
-                el.classList.forEach(cls => initialClasses.add(cls));
-            }
+            replaceShorthandsInElement(el);
+        });
+        const initialClasses = new Set();
+        allElements.forEach(el => {
+            collectClassesFromNode(el, initialClasses);
         });
         const initialRules = new Set();
         initialClasses.forEach(cls => {
             generateRuleForClass(cls, initialRules);
         });
         style.textContent = [...initialRules].join('\n');
-        console.log(`Lazy CSS: Initialized with ${activeCssRules.size} unique rule declarations generated. Watching for DOM changes.`);
+        console.log(`Lazy CSS: Initialized with ${activeCssRules.size} unique rule declarations generated (after class replacement). Watching for DOM changes.`);
     };
     const observer = new MutationObserver(mutations => {
         if (mutationTimer) {
@@ -482,7 +576,7 @@ document.addEventListener("DOMContentLoaded", () => {
             attributes: true,
             attributeFilter: ['class']
         });
-    }
+    };
     performInitialScan();
     observe();
 });
