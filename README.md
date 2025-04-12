@@ -34,7 +34,8 @@ Here's a boiler plate:-
             borderRadius: {},
             fontSize: {},
             height: {},
-            width: {}
+            width: {},
+            transitions: {}
           }
         },
         plugins: []
