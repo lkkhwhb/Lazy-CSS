@@ -15,10 +15,19 @@ Here's a boiler plate:-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script>
-        window.lazyCssConfig = {
-        screens: {},
+     window.lazyCssConfig = {
+        screens: {
+            height: {
+                min: { sm: '400px' },
+                max: { md: '700px' }
+            },
+            width: {
+                min: { sm: '640px', md: '768px', lg: '1024px', xl: '1280px' },
+                max: { xl: '1400px' }
+            }
+        },
         theme: {
-          aliases:{},
+          aliases: {},
           extend: {
             colors: {},
             spacing: {},
@@ -30,7 +39,7 @@ Here's a boiler plate:-
         },
         plugins: []
       };
-    </script>
+  </script>
     <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy2.js" defer></script>
 </head>
 <body class="">
