@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
         bg: 'background-color', c: 'color', round: 'border-radius', ml: 'margin-left', m: 'margin', mr: 'margin-right', h: 'height', w: 'width',
         mt: 'margin-top', mb: 'margin-bottom', pl: 'padding-left', p: 'padding', pr: 'padding-right', pt: 'padding-top',
         pb: 'padding-bottom', fs: 'font-size', border: 'border', z: 'z-index', gap: 'gap',
+        'min-h': 'min-height', 'max-h': 'max-height', 'min-w': 'min-width', 'max-w': 'max-width',
         l: { p: 'left', pos: true }, r: { p: 'right', pos: true }, t: { p: 'top', pos: true }, b: { p: 'bottom', pos: true },
         gridCols: 'grid-template-columns'
     };
@@ -16,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
         spacing: ['m', 'p', 'ml', 'pl', 'mr', 'pr', 'mt', 'pt', 'mb', 'pb', 'gap'],
         borderRadius: ['round'],
         fontSize: ['fs'],
-        height: ['h'],
-        width: ['w']
+        height: ['h', 'min-h', 'max-h'],
+        width: ['w', 'min-w', 'max-w']
     };
     const colorPalette = {
         orange: { 50: '#fff7ed', 100: '#FFE8D1', 200: '#FFD1A4', 300: '#FFB877', 400: '#FF9F4A', 500: '#FF8500', 600: '#E57700', 700: '#CC6900', 800: '#B35A00', 900: '#994B00', 950: '#431407' },
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const pixelPropKeys = new Set([
         'h', 'w', 'ml', 'm', 'mr', 'mt', 'mb', 'pl', 'p', 'pr', 'pt', 'pb',
-        'round', 'fs', 'gap', 'l', 'r', 't', 'b'
+        'round', 'fs', 'gap', 'l', 'r', 't', 'b', 'min-h', 'max-h', 'min-w', 'max-w'
     ]);
     if (Array.isArray(config.plugins)) {
         config.plugins.forEach(plugin => {
@@ -72,21 +73,57 @@ document.addEventListener("DOMContentLoaded", () => {
     let finalBreakpoints = defaultBreakpoints;
     if (config?.screens && typeof config.screens === 'object' && Object.keys(config.screens).length > 0) {
         const userScreens = config.screens;
-        const validatedScreens = {};
+        finalBreakpoints = {};
         let isValid = true;
-        for (const key in userScreens) {
-            if (typeof userScreens[key] === 'string' && userScreens[key].trim() !== '') {
-                validatedScreens[key] = userScreens[key];
-            } else {
-                console.warn(`Lazy CSS: Invalid screen value for "${key}". Must be a non-empty string. Skipping.`);
-                isValid = false;
+
+
+        if (userScreens.width && userScreens.width.min) {
+            for (const key in userScreens.width.min) {
+                if (typeof userScreens.width.min[key] === 'string' && userScreens.width.min[key].trim() !== '') {
+                    finalBreakpoints[key] = `(min-width: ${userScreens.width.min[key]})`;
+                } else {
+                    console.warn(`Lazy CSS: Invalid screen value for width.min "${key}". Must be a non-empty string. Skipping.`);
+                    isValid = false;
+                }
             }
         }
-        if (isValid && Object.keys(validatedScreens).length > 0) {
-            finalBreakpoints = validatedScreens;
+        if (userScreens.width && userScreens.width.max) {
+            for (const key in userScreens.width.max) {
+                if (typeof userScreens.width.max[key] === 'string' && userScreens.width.max[key].trim() !== '') {
+                    finalBreakpoints[key] = `(max-width: ${userScreens.width.max[key]})`;
+                } else {
+                    console.warn(`Lazy CSS: Invalid screen value for width.max "${key}". Must be a non-empty string. Skipping.`);
+                    isValid = false;
+                }
+            }
+        }
+        if (userScreens.height && userScreens.height.min) {
+            for (const key in userScreens.height.min) {
+                if (typeof userScreens.height.min[key] === 'string' && userScreens.height.min[key].trim() !== '') {
+                    finalBreakpoints[key] = finalBreakpoints[key] ? `${finalBreakpoints[key]} and (min-height: ${userScreens.height.min[key]})` : `(min-height: ${userScreens.height.min[key]})`;
+                } else {
+                    console.warn(`Lazy CSS: Invalid screen value for height.min "${key}". Must be a non-empty string. Skipping.`);
+                    isValid = false;
+                }
+            }
+        }
+         if (userScreens.height && userScreens.height.max) {
+            for (const key in userScreens.height.max) {
+                if (typeof userScreens.height.max[key] === 'string' && userScreens.height.max[key].trim() !== '') {
+                    finalBreakpoints[key] = finalBreakpoints[key] ? `${finalBreakpoints[key]} and (max-height: ${userScreens.height.max[key]})` : `(max-height: ${userScreens.height.max[key]})`;
+                } else {
+                    console.warn(`Lazy CSS: Invalid screen value for height.max "${key}". Must be a non-empty string. Skipping.`);
+                    isValid = false;
+                }
+            }
+        }
+
+
+        if (isValid && Object.keys(finalBreakpoints).length > 0) {
             console.log("Lazy CSS: Using custom screens:", finalBreakpoints);
         } else if (!isValid) {
-             console.warn("Lazy CSS: Custom screens config invalid or empty after validation. Falling back to defaults.");
+             console.warn("Lazy CSS: Custom screens config invalid after validation. Falling back to defaults.");
+             finalBreakpoints = defaultBreakpoints;
              console.log("Lazy CSS: Using default screens:", defaultBreakpoints);
         } else {
             console.log("Lazy CSS: Custom screens config is empty. Using default screens:", defaultBreakpoints);
@@ -306,6 +343,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 return rule;
             }
         }
+         if (match = s.match(/^min-hw-\[(.*?)\]$/)) {
+            const valsStr = match[1];
+            const sanitizedValsStr = String(valsStr).replace(/[;{}]/g, '');
+            const vals = sanitizedValsStr.split(',').map(v => v.trim());
+            const [hVal, wVal] = vals.length > 1 ? vals : [vals[0], vals[0]];
+            if (hVal == null || hVal === '' || wVal == null || wVal === '') {
+                styleCache.set(original, null);
+                return null;
+            }
+            addProp('min-h', hVal);
+            addProp('min-w', wVal);
+            if (rule) {
+                styleCache.set(original, rule);
+                return rule;
+            }
+             styleCache.set(original, null);
+             return null;
+        }
+        if (match = s.match(/^max-hw-\[(.*?)\]$/)) {
+            const valsStr = match[1];
+            const sanitizedValsStr = String(valsStr).replace(/[;{}]/g, '');
+            const vals = sanitizedValsStr.split(',').map(v => v.trim());
+            const [hVal, wVal] = vals.length > 1 ? vals : [vals[0], vals[0]];
+             if (hVal == null || hVal === '' || wVal == null || wVal === '') {
+                styleCache.set(original, null);
+                return null;
+            }
+            addProp('max-h', hVal);
+            addProp('max-w', wVal);
+             if (rule) {
+                styleCache.set(original, rule);
+                return rule;
+            }
+             styleCache.set(original, null);
+             return null;
+        }
         if (match = s.match(/^mp-\[(.*?)\]$/)) {
             const valsStr = match[1];
             const sanitizedValsStr = String(valsStr).replace(/[;{}]/g, '');
@@ -437,8 +510,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (responsiveMatch) {
             const breakpoint = responsiveMatch[1];
             const innerClassesString = responsiveMatch[2];
-            const mediaQueryMinWidth = finalBreakpoints[breakpoint];
-            if (mediaQueryMinWidth) {
+            const mediaQuery = finalBreakpoints[breakpoint];
+            if (mediaQuery) {
                 const escapedOriginalClassName = escapeCls(className);
                 let combinedDeclarations = '';
                 innerClassesString.split(',')
@@ -448,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         combinedDeclarations += parseStyle(innerCls) || '';
                     });
                 if (combinedDeclarations) {
-                    const fullRule = `@media (min-width: ${mediaQueryMinWidth}) {\n  .${escapedOriginalClassName} { ${combinedDeclarations} }\n}`;
+                    const fullRule = `@media ${mediaQuery} {\n  .${escapedOriginalClassName} { ${combinedDeclarations} }\n}`;
                     if (!activeCssRules.has(fullRule)) {
                         activeCssRules.add(fullRule);
                         newRulesOutput.add(fullRule);
