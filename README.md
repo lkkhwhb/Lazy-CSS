@@ -74,6 +74,7 @@ Here's a boiler plate:-
    ```html
    <script src="https://lkkhwhb.github.io/Lazy-CSS/lazy2.js"></script>
    ```
+   
 ```html
 <!DOCTYPE html>
 <html lang="en">
