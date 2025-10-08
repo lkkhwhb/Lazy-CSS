@@ -41,7 +41,7 @@ Here's a boiler plate:-
         plugins: []
       };
   </script>
-    <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy2.js" defer></script>
+    <script src="https://lkkhwhb.github.io/Lazy-CSS/lazy2.js" defer></script>
 </head>
 <body class="">
     
@@ -68,11 +68,11 @@ Here's a boiler plate:-
 2.  Include the script in your HTML file, preferably with the `defer` attribute in the `<head>` or at the end of the `<body>`.
 3. You may use the CDN version for quick testing purpose.
    ```html
-   <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy.js"></script>
+   <script src="https://lkkhwhb.github.io/Lazy-CSS/lazy.js"></script>
    ```
    New features are first added to lazy2.js so if you like to try new features please feel free to use
    ```html
-   <script src="https://bhargavxyz738.github.io/Lazy-CSS/lazy2.js"></script>
+   <script src="https://lkkhwhb.github.io/Lazy-CSS/lazy2.js"></script>
    ```
 ```html
 <!DOCTYPE html>
@@ -130,7 +130,7 @@ Here's a boiler plate:-
 **Note:**
 *   Ensure the `lazy.js` script has the `defer` attribute or is placed just before the closing `</body>` tag so the DOM is ready for the initial scan.
 *   If using `window.lazyCssConfig`, the configuration script *must* appear **before** the `lazy-css.js` script tag.
-*   The script automatically links `lazy.css` from `https://bhargavxyz738.github.io/Lazy-CSS/lazy.css`. If you host `lazy.css` elsewhere, you'll need to modify the `lazyBaseLink.href` line in the JavaScript.
+*   The script automatically links `lazy.css` from `https://lkkhwhb.github.io/Lazy-CSS/lazy.css`. If you host `lazy.css` elsewhere, you'll need to modify the `lazyBaseLink.href` line in the JavaScript.
 
 ## Usage
 
